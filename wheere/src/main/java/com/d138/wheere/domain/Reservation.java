@@ -36,4 +36,40 @@ public class Reservation {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ReservationState reservationState;
+
+    /* 생성자 */
+    public Reservation() {
+    }
+
+    public Reservation(Member member, Bus bus,
+                       String startPoint, String endPoint,
+                       LocalDateTime reservationDate,
+                       ReservationState reservationState) {
+        this.member = member;
+        this.bus = bus;
+        this.startPoint = startPoint;
+        this.endPoint = endPoint;
+        this.reservationDate = reservationDate;
+        this.reservationState = reservationState;
+    }
+
+    /* 생성 메서드 */
+    public static Reservation createReservation(Member member, Bus bus,
+                                                String startPoint, String endPoint,
+                                                LocalDateTime reservationDate) {
+        Reservation reservation = new Reservation(member, bus, startPoint, endPoint,
+                reservationDate, ReservationState.WAITING);
+
+        return reservation;
+    }
+
+    /* 비지니스 로직 */
+    public void changeReservationState(ReservationState reservationState) {
+        this.reservationState = reservationState;
+    }
+
+    public void cancel(){
+        this.changeReservationState(ReservationState.CANCEL);
+        bus.addSeats();
+    }
 }
