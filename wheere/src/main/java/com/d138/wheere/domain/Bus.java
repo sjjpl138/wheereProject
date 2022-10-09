@@ -1,5 +1,6 @@
 package com.d138.wheere.domain;
 
+import com.d138.wheere.exception.NotEnoughSeatsException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -38,5 +39,13 @@ public class Bus {
         if (this.leftWheelChairSeats + capacity <= totalWheelChairSeats) {
             this.leftWheelChairSeats += capacity;
         }
+    }
+
+    public void subSeats(int capacity) {
+        int restSeats = this.leftWheelChairSeats - capacity;
+        if (restSeats < 0) {
+            throw new NotEnoughSeatsException("남은 좌석이 없습니다.")
+        }
+        this.leftWheelChairSeats = restSeats;
     }
 }

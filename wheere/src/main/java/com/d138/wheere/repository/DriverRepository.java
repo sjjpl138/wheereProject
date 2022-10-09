@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class DriverRepository {
 
-    //testTest
     @PersistenceContext
     private EntityManager em;
+
 }
