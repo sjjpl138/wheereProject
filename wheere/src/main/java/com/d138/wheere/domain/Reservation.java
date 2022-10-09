@@ -60,6 +60,9 @@ public class Reservation {
         Reservation reservation = new Reservation(member, bus, startPoint, endPoint,
                 reservationDate, ReservationState.WAITING);
 
+        // 예약 시 버스 좌석 줄어드는지 테스트하기
+        bus.subSeats();
+
         return reservation;
     }
 

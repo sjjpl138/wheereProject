@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -18,7 +19,9 @@ public class Route {
     @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
+    @NotNull
     private String station;
 
+    @NotNull
     private int stationSeq;
 }

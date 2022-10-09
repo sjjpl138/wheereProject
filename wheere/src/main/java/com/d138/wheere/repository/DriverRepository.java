@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
-@RequiredArgsConstructor
+@RequiredArgsConstructor                 
 public class DriverRepository {
 
     private final EntityManager em;
