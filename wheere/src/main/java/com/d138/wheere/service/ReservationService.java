@@ -58,8 +58,8 @@ public class ReservationService {
     @Transactional
     public void cancelReservation(Long reservationId) {
         // 예약 엔티티 조회
-        Reservation reservation = reservationRepository.findOne(reservationId);
+        Reservation findReservation = reservationRepository.findOne(reservationId);
 
-        reservation.cancel();
+        findReservation.cancel();
     }
 }

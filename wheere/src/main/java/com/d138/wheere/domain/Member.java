@@ -23,6 +23,7 @@ public class Member {
     private String name;
 
     @NotNull
+    // 버스 요금 구분을 위한 나이
     private int age;
 
     @NotNull

@@ -59,8 +59,6 @@ public class ReservationServiceTest {
         Bus findBus = busRepository.findOne(busId);
         assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(1);
 
-        // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
-
     }
 
     @Test
@@ -70,7 +68,7 @@ public class ReservationServiceTest {
         // Given
         Long memberId1 = createMember();
         Long memberId2 = createMember();
-        Long memberId4 = createMember();
+        Long memberId3 = createMember();
 
         Long busId = createBus();
         Bus findBus = busRepository.findOne(busId);
@@ -85,14 +83,29 @@ public class ReservationServiceTest {
         
         // Then
         assertThrows(NotEnoughSeatsException.class, () ->
-            reservationService.saveReservation(memberId4, busId, "구미역", "금오공대",
+            reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
                     LocalDateTime.now())
         );
     }
 
     @Test
     public void 예약_취소(){
+        // Given
+        Long memberId = createMember();
 
+        Long busId = createBus();
+
+        // When
+        Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
+                LocalDateTime.now());
+
+        // 예약 취소
+        reservationService.cancelReservation(reservationId);
+
+        // Then
+        // 예약 상태 변경 (xxx -> CANCEL) 확인
+        Reservation findReservation = reservationRepository.findOne(reservationId);
+        assertThat(findReservation.getReservationState()).isEqualTo(ReservationState.CANCEL);
     }
 
     private Long createMember(){
