@@ -37,13 +37,15 @@ public class ReservationService {
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
 
         // 해당 버스 좌석 감소
-        try {
+        /*try {
             bus.subSeats();
             System.out.println("bus.getLeftWheelChairSeats() = " + bus.getLeftWheelChairSeats());
         } catch (NotEnoughSeatsException e) {
             e.printStackTrace();
             System.out.println("예약이 불가합니다.");
-        }
+        }*/
+
+        bus.subSeats();
 
         reservationRepository.save(reservation);
 

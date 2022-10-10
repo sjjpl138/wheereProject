@@ -1,6 +1,7 @@
 package com.d138.wheere.service;
 
 import com.d138.wheere.domain.*;
+import com.d138.wheere.exception.NotEnoughSeatsException;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
@@ -15,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -36,14 +38,11 @@ public class ReservationServiceTest {
     MemberRepository memberRepository;
 
     @Test
-    @Transactional
     public void 예약하기(){
 
         // Given
-//        Member member = createMember();
         Long memberId = createMember();
 
-//        Bus bus = createBus();
         Long busId = createBus();
 
         // When
@@ -62,6 +61,33 @@ public class ReservationServiceTest {
 
         // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
 
+    }
+
+    @Test
+    public void 예약_예외_발생() {
+        // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
+
+        // Given
+        Long memberId1 = createMember();
+        Long memberId2 = createMember();
+        Long memberId4 = createMember();
+
+        Long busId = createBus();
+        Bus findBus = busRepository.findOne(busId);
+
+        // When
+        Long reservationId1 = reservationService.saveReservation(memberId1, busId, "구미역", "금오공대",
+                LocalDateTime.now());
+        System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
+        Long reservationId2 = reservationService.saveReservation(memberId2, busId, "구미역", "금오공대",
+                LocalDateTime.now());
+        System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
+        
+        // Then
+        assertThrows(NotEnoughSeatsException.class, () ->
+            reservationService.saveReservation(memberId4, busId, "구미역", "금오공대",
+                    LocalDateTime.now())
+        );
     }
 
     @Test
