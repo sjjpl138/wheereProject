@@ -36,6 +36,7 @@ public class ReservationServiceTest {
     MemberRepository memberRepository;
 
     @Test
+    @Transactional
     public void 예약하기(){
 
         // Given
@@ -58,6 +59,9 @@ public class ReservationServiceTest {
         // 예약시 버스 좌석은 하나 줄어들어야 한다.
         Bus findBus = busRepository.findOne(busId);
         assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(1);
+
+        // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
+
     }
 
     @Test

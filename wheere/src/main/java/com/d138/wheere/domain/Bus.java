@@ -44,7 +44,7 @@ public class Bus {
     }
 
     public void subSeats() {
-        int restSeats = this.leftWheelChairSeats--;
+        int restSeats = this.leftWheelChairSeats - 1;
         if (restSeats < 0) {
             throw new NotEnoughSeatsException("남은 좌석이 없습니다.");
         }

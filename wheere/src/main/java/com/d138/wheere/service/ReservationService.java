@@ -3,6 +3,7 @@ package com.d138.wheere.service;
 import com.d138.wheere.domain.Bus;
 import com.d138.wheere.domain.Member;
 import com.d138.wheere.domain.Reservation;
+import com.d138.wheere.exception.NotEnoughSeatsException;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
@@ -34,6 +35,15 @@ public class ReservationService {
 
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
+
+        // 해당 버스 좌석 감소
+        try {
+            bus.subSeats();
+            System.out.println("bus.getLeftWheelChairSeats() = " + bus.getLeftWheelChairSeats());
+        } catch (NotEnoughSeatsException e) {
+            e.printStackTrace();
+            System.out.println("예약이 불가합니다.");
+        }
 
         reservationRepository.save(reservation);
 
