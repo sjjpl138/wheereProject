@@ -95,6 +95,8 @@ public class ReservationServiceTest {
 
         Long busId = createBus();
 
+        Bus findBus = busRepository.findOne(busId);
+
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
                 LocalDateTime.now());
@@ -106,13 +108,49 @@ public class ReservationServiceTest {
         // 예약 상태 변경 (xxx -> CANCEL) 확인
         Reservation findReservation = reservationRepository.findOne(reservationId);
         assertThat(findReservation.getReservationState()).isEqualTo(ReservationState.CANCEL);
+
+        // 버스 좌석 수 증가
+        assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);
+
+        findReservation.canCancel();
+
+        // 남은 좌석 수가 이미 total 일 경우 예약을 취소해도 남은 좌석 수가 증가하지 않는다.
+        reservationService.cancelReservation(reservationId);
+        assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);
+    }
+
+    @Test
+    public void 예약_취소_예외() {
+        // Given
+        Long memberId = createMember();
+
+        Long busId = createBus();
+
+        Bus findBus = busRepository.findOne(busId);
+
+        // When
+        Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
+                LocalDateTime.now());
+
+        Reservation findReservation = reservationRepository.findOne(reservationId);
+
+        findReservation.changeReservationState(ReservationState.CANCEL);
+
+        System.out.println("findReservation.getReservationState() = " + findReservation.getReservationState());
+
+        // Then
+        // 이미 예약이 취소가 된 상태라면 예약 취소가 불가능해야 한다.
+        assertThrows(IllegalStateException.class, () ->
+                reservationService.cancelReservation(reservationId)
+        );
+
     }
 
     private Long createMember(){
         Member member = new Member();
-        member.setName("손지민");
+        member.setName("홍길동");
         member.setAge(22);
-        member.setPhoneNumber("010-7457-3342");
+        member.setPhoneNumber("010-1111-1111");
 
         em.persist(member);
         return member.getId();
