@@ -1,6 +1,7 @@
 package com.d138.wheere.service;
 
 import com.d138.wheere.domain.*;
+import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
 import org.assertj.core.api.Assertions;
@@ -29,6 +30,9 @@ public class ReservationServiceTest {
     ReservationRepository reservationRepository;
 
     @Autowired
+    BusRepository busRepository;
+
+    @Autowired
     MemberRepository memberRepository;
 
     @Test
@@ -50,13 +54,19 @@ public class ReservationServiceTest {
 
         // 예약시 상태는 대기 (WAITING) 상태여야 한다.
         assertThat(findReservation.getReservationState()).isEqualTo(ReservationState.WAITING);
-//        assertThat()
-//        System.out.println(findReservation.getReservationState());
+
+        // 예약시 버스 좌석은 하나 줄어들어야 한다.
+        Bus findBus = busRepository.findOne(busId);
+        assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(1);
+    }
+
+    @Test
+    public void 예약_취소(){
+
     }
 
     private Long createMember(){
         Member member = new Member();
-//        member.setId(1L);
         member.setName("손지민");
         member.setAge(22);
         member.setPhoneNumber("010-7457-3342");
@@ -67,7 +77,6 @@ public class ReservationServiceTest {
 
     private Long createBus(){
         Bus bus = new Bus();
-//        bus.setId(13L);
         bus.setBusNumber("191");
         bus.setDriver(new Driver());
         bus.setTotalWheelChairSeats(2);
