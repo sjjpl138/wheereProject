@@ -69,16 +69,17 @@ public class ReservationService {
         return reservationRepository.findOne(reservationId);
     }
 
-    // 로그인 한 사용자에 대한 예약 정보를 모두 조회
+    public List<Reservation> findAll() {
+        return reservationRepository.findAll();
+    }
+
+    // 특정 사용자에 대한 모든 예약 정보 조회
     public List<Reservation> findReservationsByMember(Long memberId) {
         return reservationRepository.findByMember(memberId);
     }
 
+    // 특정 버스에 대한 모든 예약 정보 조회
     public List<Reservation> findReservationsByBus(Long busId) {
         return reservationRepository.findByBus(busId);
-    }
-
-    public List<Reservation> findAll() {
-        return reservationRepository.findAll();
     }
 }

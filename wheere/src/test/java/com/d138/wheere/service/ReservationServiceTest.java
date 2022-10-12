@@ -32,6 +32,12 @@ public class ReservationServiceTest {
     ReservationService reservationService;
 
     @Autowired
+    MemberService memberService;
+
+    @Autowired
+    BusService busService;
+
+    @Autowired
     ReservationRepository reservationRepository;
 
     @Autowired
