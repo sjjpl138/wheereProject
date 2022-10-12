@@ -25,6 +25,17 @@ public class ReservationRepository {
 
     public List<Reservation> findAll() {
         return em.createQuery("select r from Reservation r", Reservation.class)
-                 .getResultList();
+                .getResultList();
+    }
+
+    // MemberId로 예약 조회하기
+    public List<Reservation> findAllByMember(Long memberId) {
+        return em.createQuery("select r from Reservation r where r.memberId = :mId", Reservation.class)
+                .setParameter("mId", memberId).getResultList();
+    }
+
+    public List<Reservation> findAllByBus(Long busId) {
+        return em.createQuery("select r from Reservation r where r.busId = :bId", Reservation.class)
+                .setParameter("bId", busId).getResultList();
     }
 }

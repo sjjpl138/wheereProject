@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -38,7 +39,7 @@ public class ReservationServiceTest {
     MemberRepository memberRepository;
 
     @Test
-    public void 예약하기(){
+    public void 예약하기() {
 
         // Given
         Long memberId = createMember();
@@ -80,16 +81,16 @@ public class ReservationServiceTest {
         Long reservationId2 = reservationService.saveReservation(memberId2, busId, "구미역", "금오공대",
                 LocalDateTime.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
-        
+
         // Then
         assertThrows(NotEnoughSeatsException.class, () ->
-            reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
-                    LocalDateTime.now())
+                reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
+                        LocalDateTime.now())
         );
     }
 
     @Test
-    public void 예약_취소(){
+    public void 예약_취소() {
         // Given
         Long memberId = createMember();
 
@@ -134,7 +135,7 @@ public class ReservationServiceTest {
 
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
-        findReservation.changeReservationState(ReservationState.CANCEL);
+        reservationService.cancelReservation(reservationId);
 
         System.out.println("findReservation.getReservationState() = " + findReservation.getReservationState());
 
@@ -146,7 +147,22 @@ public class ReservationServiceTest {
 
     }
 
-    private Long createMember(){
+    @Test
+    public void 예약_조회() {
+        // 사용자에 대한 모든 예약 조회
+        // 버스에 대한 모든 예약 조회
+
+        // Given
+
+
+        // When
+
+
+        // Then
+
+    }
+
+    private Long createMember() {
         Member member = new Member();
         member.setName("홍길동");
         member.setAge(22);
@@ -156,7 +172,7 @@ public class ReservationServiceTest {
         return member.getId();
     }
 
-    private Long createBus(){
+    private Long createBus() {
         Bus bus = new Bus();
         bus.setBusNumber("191");
         bus.setDriver(new Driver());

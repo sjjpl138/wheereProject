@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -62,5 +63,18 @@ public class ReservationService {
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         findReservation.cancel();
+    }
+
+    public Reservation findReservation(Long reservationId) {
+        return reservationRepository.findOne(reservationId);
+    }
+
+    // 로그인 한 사용자에 대한 예약 정보를 모두 조회
+    public List<Reservation> findReservationsByMember(Long memberId) {
+        return reservationRepository.findAllByMember(memberId);
+    }
+
+    public List<Reservation> findReservationsByBus(Long busId) {
+        return reservationRepository.findAllByBus(busId);
     }
 }
