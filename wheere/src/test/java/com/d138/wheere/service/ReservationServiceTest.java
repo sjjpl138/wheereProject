@@ -9,12 +9,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,9 +44,9 @@ public class ReservationServiceTest {
     public void 예약하기() {
 
         // Given
-        Long memberId = createMember();
+        Long memberId = createMember("정영한");
 
-        Long busId = createBus();
+        Long busId = createBus("191");
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
@@ -67,11 +69,11 @@ public class ReservationServiceTest {
         // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
 
         // Given
-        Long memberId1 = createMember();
-        Long memberId2 = createMember();
-        Long memberId3 = createMember();
+        Long memberId1 = createMember("정영한");
+        Long memberId2 = createMember("정연준");
+        Long memberId3 = createMember("손지민");
 
-        Long busId = createBus();
+        Long busId = createBus("191");
         Bus findBus = busRepository.findOne(busId);
 
         // When
@@ -92,9 +94,9 @@ public class ReservationServiceTest {
     @Test
     public void 예약_취소() {
         // Given
-        Long memberId = createMember();
+        Long memberId = createMember("정영한");
 
-        Long busId = createBus();
+        Long busId = createBus("191");
 
         Bus findBus = busRepository.findOne(busId);
 
@@ -116,16 +118,16 @@ public class ReservationServiceTest {
         findReservation.canCancel();
 
         // 남은 좌석 수가 이미 total 일 경우 예약을 취소해도 남은 좌석 수가 증가하지 않는다.
-        reservationService.cancelReservation(reservationId);
-        assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);
+        /*reservationService.cancelReservation(reservationId);
+        assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);*/
     }
 
     @Test
     public void 예약_취소_예외() {
         // Given
-        Long memberId = createMember();
+        Long memberId = createMember("정영한");
 
-        Long busId = createBus();
+        Long busId = createBus("191");
 
         Bus findBus = busRepository.findOne(busId);
 
@@ -149,22 +151,63 @@ public class ReservationServiceTest {
 
     @Test
     public void 예약_조회() {
+        // 예약 번호로 예약 조회 기능
         // 사용자에 대한 모든 예약 조회
         // 버스에 대한 모든 예약 조회
 
         // Given
+        Long memberId1 = createMember("정영한");
+        Long memberId2 = createMember("정연준");
+
+        Long busId1 = createBus("1");
+        Long busId2 = createBus("2");
+        Long busId3 = createBus("3");
+        Long busId4 = createBus("4");
+        Long busId5 = createBus("5");
 
 
         // When
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDateTime.now());
+
+        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDateTime.now());
 
 
         // Then
+        Member findMember = memberRepository.findOne(memberId1);
 
+        // 사용자에 대한 모든 예약 조회
+        List<Reservation> reservationsByMember = reservationService.findReservationsByMember(memberId1);
+
+        assertThat(reservationsByMember.get(0).getBus().getBusNumber()).isEqualTo("1");
+        assertThat(reservationsByMember.get(1).getBus().getBusNumber()).isEqualTo("2");
+        assertThat(reservationsByMember.get(2).getBus().getBusNumber()).isEqualTo("3");
+        assertThat(reservationsByMember.get(3).getBus().getBusNumber()).isEqualTo("4");
+        assertThat(reservationsByMember.get(4).getBus().getBusNumber()).isEqualTo("5");
+
+        // 버스에 대한 모든 예약 조회
+        List<Reservation> reservationsByBus = reservationService.findReservationsByBus(busId1);
+
+        assertThat(reservationsByBus.get(0).getMember().getName()).isEqualTo("정영한");
+        assertThat(reservationsByBus.get(1).getMember().getName()).isEqualTo("정연준");
+
+        // 모든 버스 예약 조회
+        List<Reservation> reservations = reservationService.findAll();
+
+        assertThat(reservations.get(0).getBus().getBusNumber()).isEqualTo("1");
+        assertThat(reservations.get(1).getBus().getBusNumber()).isEqualTo("2");
+        assertThat(reservations.get(2).getBus().getBusNumber()).isEqualTo("3");
+        assertThat(reservations.get(3).getBus().getBusNumber()).isEqualTo("4");
+        assertThat(reservations.get(4).getBus().getBusNumber()).isEqualTo("5");
+        assertThat(reservations.get(5).getBus().getBusNumber()).isEqualTo("1");
     }
 
-    private Long createMember() {
+    private Long createMember(String name) {
         Member member = new Member();
-        member.setName("홍길동");
+        member.setName(name);
         member.setAge(22);
         member.setPhoneNumber("010-1111-1111");
 
@@ -172,10 +215,16 @@ public class ReservationServiceTest {
         return member.getId();
     }
 
-    private Long createBus() {
+    private Long createBus(String busNum) {
+        Driver driver = new Driver();
+        driver.setName("정영한");
+        driver.setRatingCnt(5);
+        driver.setRatingScore(4.0);
+        em.persist(driver);
+
         Bus bus = new Bus();
-        bus.setBusNumber("191");
-        bus.setDriver(new Driver());
+        bus.setBusNumber(busNum);
+        bus.setDriver(driver);
         bus.setTotalWheelChairSeats(2);
         bus.setLeftWheelChairSeats(2);
 

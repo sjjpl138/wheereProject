@@ -12,6 +12,12 @@ public class BusRepository {
 
     private final EntityManager em;
 
+    public Long save(Bus bus) {
+        em.persist(bus);
+
+        return bus.getId();
+    }
+
     public Bus findOne(Long id) {
         return em.find(Bus.class, id);
     }

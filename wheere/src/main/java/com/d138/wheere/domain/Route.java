@@ -24,4 +24,6 @@ public class Route {
 
     @NotNull
     private int stationSeq;
+
+    /* 연관관계 편의 메서드 */
 }
