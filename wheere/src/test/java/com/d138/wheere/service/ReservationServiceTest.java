@@ -146,7 +146,6 @@ public class ReservationServiceTest {
         assertThrows(IllegalStateException.class, () ->
                 reservationService.cancelReservation(reservationId)
         );
-
     }
 
     @Test
@@ -164,7 +163,6 @@ public class ReservationServiceTest {
         Long busId3 = createBus("3");
         Long busId4 = createBus("4");
         Long busId5 = createBus("5");
-
 
         // When
         reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
