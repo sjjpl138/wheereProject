@@ -27,6 +27,9 @@ public class Bus {
     private List<Route> routes = new ArrayList<>();
 
     @NotNull
+    private int busAllocationNumber;
+
+    @NotNull
     private String busNumber;
 
     @NotNull
