@@ -5,13 +5,10 @@ import com.d138.wheere.exception.NotEnoughSeatsException;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -209,30 +206,41 @@ public class ReservationServiceTest {
         assertThat(reservations.get(5).getBus().getBusNumber()).isEqualTo("1");
     }
 
+    @Test
+    public void 예약_제약_검증() {
+        // Given
+        Long memberId1 = createMember("정영한");
+        Long busId1 = createBus("1");
+
+        // When
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
+
+        // Then
+        assertThrows(IllegalStateException.class, () ->
+                reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDateTime.now())
+        );
+    }
+
     private Long createMember(String name) {
         Member member = new Member();
         member.setName(name);
         member.setAge(22);
         member.setPhoneNumber("010-1111-1111");
+        member.setSex("female");
 
         em.persist(member);
         return member.getId();
     }
 
     private Long createBus(String busNum) {
-        Driver driver = new Driver();
-        driver.setName("정영한");
-        driver.setRatingCnt(5);
-        driver.setRatingScore(4.0);
-        em.persist(driver);
-
         Bus bus = new Bus();
         bus.setBusNumber(busNum);
-        bus.setDriver(driver);
         bus.setTotalWheelChairSeats(2);
         bus.setLeftWheelChairSeats(2);
-
+        bus.setDirection("F");
+        bus.setBusAllocationSeq(1);
         em.persist(bus);
+
         return bus.getId();
     }
 }

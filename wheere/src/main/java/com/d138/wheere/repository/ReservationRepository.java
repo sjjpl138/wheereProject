@@ -38,12 +38,14 @@ public class ReservationRepository {
                 .setParameter("busId", busId).getResultList();
     }
 
-    public List<Reservation> checkScheduleDuplication(String busNumber, int busAllocationSeq, String direction) {
+    public List<Reservation> checkScheduleDuplication(Long memberId, String busNumber, int busAllocationSeq, String direction) {
 
-        return em.createQuery("select r from Reservation r join r.bus b where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection", Reservation.class)
+        // 현재 쿼리 잘못 짜서 에러 발생함
+        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection and m.id = :mId", Reservation.class)
                 .setParameter("bNumber", busNumber)
                 .setParameter("bAllocationSeq", busAllocationSeq)
                 .setParameter("bDirection", direction)
+                .setParameter("mId", memberId)
                 .getResultList();
     }
 }
