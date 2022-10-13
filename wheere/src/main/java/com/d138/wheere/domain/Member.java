@@ -28,4 +28,7 @@ public class Member {
 
     @NotNull
     private String phoneNumber;
+
+    @NotNull
+    private String sex; // 성별
 }

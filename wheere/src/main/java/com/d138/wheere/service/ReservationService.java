@@ -35,6 +35,9 @@ public class ReservationService {
         Member member = memberRepository.findOne(memberId);
         Bus bus = busRepository.findOne(busId);
 
+        // 버스 제약사항 추가
+        // 만약 동일한 배차순번, 버스Id를 가지면 예약 불가
+
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
 

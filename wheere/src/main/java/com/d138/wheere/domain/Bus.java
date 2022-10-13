@@ -30,6 +30,9 @@ public class Bus {
     private int busAllocationNumber;
 
     @NotNull
+    private String direction;
+
+    @NotNull
     private String busNumber;
 
     @NotNull
