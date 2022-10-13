@@ -39,6 +39,10 @@ public class ReservationService {
         // 만약 동일한 배차순번, 버스Id를 가지면 예약 불가
 
         // if (버스번호, 배차 순번, 방향) 가 동일하다면 예약 불가
+        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(bus.getBusNumber(), bus.getBusAllocationSeq(), bus.getDirection());
+        if (reservations != null || !reservations.isEmpty()) {
+            throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
+        }
 
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);

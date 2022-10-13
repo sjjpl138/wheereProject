@@ -18,15 +18,11 @@ public class Bus {
     @Column(name = "BUS_ID")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DRIVER_ID")
-    private Driver driver;
-
     @OneToMany(mappedBy = "bus")
     private List<Route> routes = new ArrayList<>();
 
     @NotNull
-    private int busAllocationNumber;
+    private int busAllocationSeq;
 
     @NotNull
     private String direction;

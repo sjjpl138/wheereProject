@@ -1,13 +1,10 @@
 package com.d138.wheere.repository;
 
-import com.d138.wheere.domain.Bus;
-import com.d138.wheere.domain.Member;
 import com.d138.wheere.domain.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -39,5 +36,14 @@ public class ReservationRepository {
     public List<Reservation> findByBus(Long busId) {
         return em.createQuery("select r from Reservation r join r.bus b where b.id = :busId", Reservation.class)
                 .setParameter("busId", busId).getResultList();
+    }
+
+    public List<Reservation> checkScheduleDuplication(String busNumber, int busAllocationSeq, String direction) {
+
+        return em.createQuery("select r from Reservation r join r.bus b where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection", Reservation.class)
+                .setParameter("bNumber", busNumber)
+                .setParameter("bAllocationSeq", busAllocationSeq)
+                .setParameter("bDirection", direction)
+                .getResultList();
     }
 }
