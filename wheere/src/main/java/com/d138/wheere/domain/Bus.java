@@ -15,7 +15,6 @@ import java.util.List;
 public class Bus {
 
     @Id
-    @GeneratedValue
     @Column(name = "BUS_ID")
     private Long id;
 
