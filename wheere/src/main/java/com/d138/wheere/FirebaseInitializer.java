@@ -1,9 +1,11 @@
+/*
 package com.d138.wheere;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import org.apache.juli.logging.Log;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +17,8 @@ import java.io.IOException;
 
 @Configuration
 public class FirebaseInitializer {
+
+    private Log log;
 
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
@@ -38,4 +42,4 @@ public class FirebaseInitializer {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance(firebaseApp());
         return firebaseAuth;
     }
-}
+}*/

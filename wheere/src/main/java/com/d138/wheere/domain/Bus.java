@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 public class Bus {
 
     @Id
@@ -18,12 +19,14 @@ public class Bus {
     @Column(name = "BUS_ID")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DRIVER_ID")
-    private Driver driver;
-
     @OneToMany(mappedBy = "bus")
     private List<Route> routes = new ArrayList<>();
+
+    @NotNull
+    private int busAllocationSeq;
+
+    @NotNull
+    private String direction;
 
     @NotNull
     private String busNumber;
@@ -43,7 +46,7 @@ public class Bus {
     }
 
     public void subSeats() {
-        int restSeats = this.leftWheelChairSeats--;
+        int restSeats = this.leftWheelChairSeats - 1;
         if (restSeats < 0) {
             throw new NotEnoughSeatsException("남은 좌석이 없습니다.");
         }

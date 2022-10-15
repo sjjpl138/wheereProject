@@ -69,7 +69,20 @@ public class Reservation {
     }
 
     public void cancel(){
+        if(!canCancel()){
+            throw new IllegalStateException("예약 취소가 불가능한 상태입니다.");
+        }
+
         this.changeReservationState(ReservationState.CANCEL);
         bus.addSeats();
+    }
+
+    public boolean canCancel() {
+        if (this.reservationState.equals(ReservationState.CANCEL) ||
+                (this.reservationState.equals(ReservationState.COMP)) ||
+                (this.reservationState.equals(ReservationState.REFUSED))) {
+            return false;
+        }
+        else return true;
     }
 }

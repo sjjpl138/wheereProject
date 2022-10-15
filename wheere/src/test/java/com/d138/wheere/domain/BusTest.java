@@ -15,8 +15,8 @@ public class BusTest {
     @PersistenceContext
     EntityManager em;
 
-    @Autowired
-    BusService busService;
+//    @Autowired
+//    BusService busService;
 
     @Autowired
     BusRepository busRepository;

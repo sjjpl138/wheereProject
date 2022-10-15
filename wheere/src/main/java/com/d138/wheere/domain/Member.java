@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
+@Setter
 public class Member {
 
     @Id
@@ -22,8 +23,17 @@ public class Member {
     private String name;
 
     @NotNull
+    // 버스 요금 구분을 위한 나이
     private int age;
 
     @NotNull
     private String phoneNumber;
+
+    @NotNull
+    private String sex; // 성별
+
+    /* 비지니스 로직 */
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }
