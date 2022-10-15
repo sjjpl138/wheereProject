@@ -31,4 +31,9 @@ public class Member {
 
     @NotNull
     private String sex; // 성별
+
+    /* 비지니스 로직 */
+    public void changePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }
