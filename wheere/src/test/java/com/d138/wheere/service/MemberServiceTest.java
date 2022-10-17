@@ -33,7 +33,7 @@ public class MemberServiceTest {
         member.setAge(22);
         member.setName("홍길동");
         member.setPhoneNumber("010-1111-1111");
-        member.setId(1L);
+        member.setId("1L");
 
         // When
         memberService.join(member);
@@ -41,7 +41,7 @@ public class MemberServiceTest {
 
         // Then
 
-        assertThat(findMember.getId()).isEqualTo(1L);
+        assertThat(findMember.getId()).isEqualTo("1L");
         assertThat(findMember.getAge()).isEqualTo(22);
         assertThat(findMember.getSex()).isEqualTo("F");
         assertThat(findMember.getName()).isEqualTo("홍길동");
@@ -58,7 +58,7 @@ public class MemberServiceTest {
         member.setAge(22);
         member.setName("홍길동");
         member.setPhoneNumber("010-1111-1111");
-        member.setId(1L);
+        member.setId("5");
 
         // When
         memberService.join(member);

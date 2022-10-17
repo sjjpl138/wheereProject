@@ -49,7 +49,7 @@ public class ReservationServiceTest {
     public void 예약하기() {
 
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
@@ -74,9 +74,9 @@ public class ReservationServiceTest {
         // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
 
         // Given
-        Long memberId1 = createMember("정영한");
-        Long memberId2 = createMember("정연준");
-        Long memberId3 = createMember("손지민");
+        String memberId1 = createMember("정영한");
+        String memberId2 = createMember("정연준");
+        String memberId3 = createMember("손지민");
 
         Long busId = createBus("191");
         Bus findBus = busRepository.findOne(busId);
@@ -99,7 +99,7 @@ public class ReservationServiceTest {
     @Test
     public void 예약_취소() {
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
@@ -130,7 +130,7 @@ public class ReservationServiceTest {
     @Test
     public void 예약_취소_예외() {
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
@@ -160,8 +160,8 @@ public class ReservationServiceTest {
         // 버스에 대한 모든 예약 조회
 
         // Given
-        Long memberId1 = createMember("정영한");
-        Long memberId2 = createMember("정연준");
+        String memberId1 = createMember("정영한");
+        String memberId2 = createMember("정연준");
 
         Long busId1 = createBus("1");
         Long busId2 = createBus("2");
@@ -211,7 +211,7 @@ public class ReservationServiceTest {
     @Test
     public void 예약_제약_검증() {
         // Given
-        Long memberId1 = createMember("정영한");
+        String memberId1 = createMember("정영한");
         Long busId1 = createBus("1");
 
         // When
@@ -223,9 +223,9 @@ public class ReservationServiceTest {
         );
     }
 
-    private Long createMember(String name) {
+    private String createMember(String name) {
         Member member = new Member();
-        member.setId(mId++);
+        member.setId((mId++).toString());
         member.setName(name);
         member.setAge(22);
         member.setPhoneNumber("010-1111-1111");

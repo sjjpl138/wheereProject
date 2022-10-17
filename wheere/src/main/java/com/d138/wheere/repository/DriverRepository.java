@@ -15,13 +15,13 @@ public class DriverRepository {
 
     private final EntityManager em;
 
-    public Long save(Driver driver) {
+    public String save(Driver driver) {
         em.persist(driver);
         return driver.getId();
     }
 
-    public Driver findOne(Long id) {
-        return em.find(Driver.class, id);
+    public Driver findOne(String driverId) {
+        return em.find(Driver.class, driverId);
     }
 
     public List<Driver> findByName(String name) {

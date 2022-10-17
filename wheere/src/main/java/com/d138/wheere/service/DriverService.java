@@ -16,7 +16,7 @@ public class DriverService {
     private final DriverRepository driverRepository;
 
     @Transactional
-    public Long join(Driver driver) {
+    public String join(Driver driver) {
         driverRepository.save(driver);
 
         return driver.getId();

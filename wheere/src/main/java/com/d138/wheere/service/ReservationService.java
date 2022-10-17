@@ -28,7 +28,7 @@ public class ReservationService {
      * 예약
      */
     @Transactional
-    public Long saveReservation(Long memberId, Long busId, String startPoint, String endPoint
+    public Long saveReservation(String memberId, Long busId, String startPoint, String endPoint
             , LocalDateTime reservationDate) {
 
         // 엔티티 조회
@@ -83,7 +83,7 @@ public class ReservationService {
     }
 
     // 특정 사용자에 대한 모든 예약 정보 조회
-    public List<Reservation> findReservationsByMember(Long memberId) {
+    public List<Reservation> findReservationsByMember(String memberId) {
         return reservationRepository.findByMember(memberId);
     }
 
