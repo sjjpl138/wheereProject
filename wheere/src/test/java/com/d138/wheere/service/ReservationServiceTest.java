@@ -43,6 +43,8 @@ public class ReservationServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    private Long mId = 0L;
+
     @Test
     public void 예약하기() {
 
@@ -223,6 +225,7 @@ public class ReservationServiceTest {
 
     private Long createMember(String name) {
         Member member = new Member();
+        member.setId(mId++);
         member.setName(name);
         member.setAge(22);
         member.setPhoneNumber("010-1111-1111");

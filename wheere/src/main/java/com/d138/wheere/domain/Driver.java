@@ -12,9 +12,8 @@ import javax.validation.constraints.NotNull;
 public class Driver {
 
     @Id
-    @GeneratedValue
     @Column(name = "DRIVER_ID")
-    private Long id;
+    private String id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BUS_ID")
