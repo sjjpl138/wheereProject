@@ -22,17 +22,13 @@ public class Member {
     @Column(name = "MEMBER_ID")
     private String id;
 
-    @NotNull
     private String name;
 
-    @NotNull
     // 버스 요금 구분을 위한 나이
     private int age;
 
-    @NotNull
     private String phoneNumber;
 
-    @NotNull
     private String sex; // 성별
 
     /* 비지니스 로직 */

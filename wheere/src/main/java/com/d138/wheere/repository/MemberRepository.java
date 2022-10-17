@@ -18,8 +18,8 @@ public class MemberRepository {
         return member.getId();
     }
 
-    public Member findOne(String id) {
-        return em.find(Member.class, id);
+    public Member findOne(String memberId) {
+        return em.find(Member.class, memberId);
     }
 
     public List<Member> findAll() {

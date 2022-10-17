@@ -15,26 +15,20 @@ import java.util.List;
 public class Bus {
 
     @Id
-    @GeneratedValue
     @Column(name = "BUS_ID")
     private Long id;
 
     @OneToMany(mappedBy = "bus")
     private List<Route> routes = new ArrayList<>();
 
-    @NotNull
     private int busAllocationSeq;
 
-    @NotNull
     private String direction;
 
-    @NotNull
     private String busNumber;
 
-    @NotNull
     private int totalWheelChairSeats;
 
-    @NotNull
     private int leftWheelChairSeats;
 
     /* 비지니스 로직 */

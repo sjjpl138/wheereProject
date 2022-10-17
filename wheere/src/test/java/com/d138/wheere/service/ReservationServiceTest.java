@@ -44,6 +44,7 @@ public class ReservationServiceTest {
     MemberRepository memberRepository;
 
     private Long mId = 0L;
+    private Long bId = 0L;
 
     @Test
     public void 예약하기() {
@@ -237,6 +238,7 @@ public class ReservationServiceTest {
 
     private Long createBus(String busNum) {
         Bus bus = new Bus();
+        bus.setId(bId++);
         bus.setBusNumber(busNum);
         bus.setTotalWheelChairSeats(2);
         bus.setLeftWheelChairSeats(2);

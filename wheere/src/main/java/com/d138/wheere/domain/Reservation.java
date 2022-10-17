@@ -24,16 +24,12 @@ public class Reservation {
     @JoinColumn(name = "BUIS_ID")
     private Bus bus;
 
-    @NotNull
     private String startPoint;
 
-    @NotNull
     private String endPoint;
 
-    @NotNull
     private LocalDateTime reservationDate;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private ReservationState reservationState;
 

@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 public class Route {
 
     @Id
-    @GeneratedValue
     @Column(name = "ROUTE_ID")
     private Long id;
 
@@ -19,10 +18,8 @@ public class Route {
     @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
-    @NotNull
     private String station;
 
-    @NotNull
     private int stationSeq;
 
     /* 연관관계 편의 메서드 */

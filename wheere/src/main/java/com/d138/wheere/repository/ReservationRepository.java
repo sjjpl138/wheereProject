@@ -40,7 +40,6 @@ public class ReservationRepository {
 
     public List<Reservation> checkScheduleDuplication(String memberId, String busNumber, int busAllocationSeq, String direction) {
 
-        // 현재 쿼리 잘못 짜서 에러 발생함
         return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection and m.id = :mId", Reservation.class)
                 .setParameter("bNumber", busNumber)
                 .setParameter("bAllocationSeq", busAllocationSeq)

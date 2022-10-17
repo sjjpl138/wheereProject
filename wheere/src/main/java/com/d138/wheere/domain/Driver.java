@@ -19,12 +19,14 @@ public class Driver {
     @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private double ratingScore;
 
-    @NotNull
     private int ratingCnt;
+
+    /* 비지니스 로직 */
+    public void changeBus(Bus bus) {
+        this.bus = bus;
+    }
 }

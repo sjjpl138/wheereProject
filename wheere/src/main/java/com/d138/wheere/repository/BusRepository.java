@@ -18,7 +18,7 @@ public class BusRepository {
         return bus.getId();
     }
 
-    public Bus findOne(Long id) {
-        return em.find(Bus.class, id);
+    public Bus findOne(Long busId) {
+        return em.find(Bus.class, busId);
     }
 }
