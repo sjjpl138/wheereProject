@@ -37,6 +37,10 @@ public class MemberServiceTest {
 
         // When
         memberService.join(member);
+
+        em.flush();
+        em.clear();
+
         Member findMember = memberService.findMember(member.getId());
 
         // Then
@@ -47,7 +51,6 @@ public class MemberServiceTest {
         assertThat(findMember.getName()).isEqualTo("홍길동");
         assertThat(findMember.getPhoneNumber()).isEqualTo("010-1111-1111");
         assertThat(findMember).isInstanceOf(Member.class);
-        assertThat(findMember).isEqualTo(member);
     }
 
     @Test
@@ -63,10 +66,13 @@ public class MemberServiceTest {
         // When
         memberService.join(member);
         memberService.modifyPhoneNumber(member.getId(), "010-1212-1212");
+
+        em.flush();
+        em.clear();
+
         Member findMember = memberService.findMember(member.getId());
 
         // Then
-        System.out.println("findMember.getPhoneNumber() = " + findMember.getPhoneNumber());
         assertThat(findMember.getPhoneNumber()).isEqualTo("010-1212-1212");
     }
 }
