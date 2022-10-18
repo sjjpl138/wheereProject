@@ -3,7 +3,6 @@ package com.d138.wheere.service;
 import com.d138.wheere.domain.Bus;
 import com.d138.wheere.domain.Driver;
 import com.d138.wheere.repository.DriverRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -59,6 +58,9 @@ public class ReservationServiceTest {
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
                 LocalDate.now());
 
+        em.flush();
+        em.clear();
+
         // Then
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
@@ -91,6 +93,9 @@ public class ReservationServiceTest {
                 LocalDate.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
 
+        em.flush();
+        em.clear();
+
         // Then
         assertThrows(NotEnoughSeatsException.class, () ->
                 reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
@@ -113,6 +118,9 @@ public class ReservationServiceTest {
 
         // 예약 취소
         reservationService.cancelReservation(reservationId);
+
+        em.flush();
+        em.clear();
 
         // Then
         // 예약 상태 변경 (xxx -> CANCEL) 확인
@@ -148,6 +156,9 @@ public class ReservationServiceTest {
 
         System.out.println("findReservation.getReservationState() = " + findReservation.getReservationState());
 
+        em.flush();
+        em.clear();
+
         // Then
         // 이미 예약이 취소가 된 상태라면 예약 취소가 불가능해야 한다.
         assertThrows(IllegalStateException.class, () ->
@@ -179,6 +190,9 @@ public class ReservationServiceTest {
         reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDate.now());
 
         reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
 
 
         // Then
@@ -216,13 +230,33 @@ public class ReservationServiceTest {
         String memberId1 = createMember("정영한");
         Long busId1 = createBus("1");
 
+        String memberId2 = createMember("정연준");
+        Long busId2 = createBus("2");
+
         // When
         reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+        Long reservationId1 = reservationService.saveReservation(memberId2, busId2, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
+
+        reservationService.cancelReservation(reservationId1);
+
+        em.flush();
+        em.clear();
+
+        Long reservationId2 = reservationService.saveReservation(memberId2, busId2, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
 
         // Then
         assertThrows(IllegalStateException.class, () ->
                 reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDate.now())
         );
+
+        System.out.println("reservationId1 = " + reservationId1);
+        System.out.println("reservationId2 = " + reservationId2);
     }
 
     private String createMember(String name) {

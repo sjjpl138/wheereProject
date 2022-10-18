@@ -39,13 +39,11 @@ public class ReservationRepository {
                 .setParameter("busId", busId).getResultList();
     }
 
-    public List<Reservation> checkScheduleDuplication(String memberId, String busNumber, int busAllocationSeq, BusState direction) {
+    public List<Reservation> checkScheduleDuplication(String memberId, Long busId) {
 
-        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection and m.id = :mId", Reservation.class)
-                .setParameter("bNumber", busNumber)
-                .setParameter("bAllocationSeq", busAllocationSeq)
-                .setParameter("bDirection", direction)
-                .setParameter("mId", memberId)
+        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.id = :busId and m.id = :memberId", Reservation.class)
+                .setParameter("busId", busId)
+                .setParameter("memberId", memberId)
                 .getResultList();
     }
 }
