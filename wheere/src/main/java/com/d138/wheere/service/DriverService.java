@@ -27,10 +27,12 @@ public class DriverService {
         return driver.getId();
     }
 
-//    @Transactional
-//    public void calculatingRatings() {
-//
-//    }
+    @Transactional
+    public void reflectScores (Long busId, double score) {
+        Driver findDriver = findDriverByBus(busId);
+
+        findDriver.calculateRatings(score);
+    }
 
     @Transactional
     public void changeBus(String driverId, Long busId) {
@@ -43,7 +45,7 @@ public class DriverService {
         return driverRepository.findOne(driverId);
     }
 
-    /*public List<Driver> findDriverByBus(Long busId) {
+    public Driver findDriverByBus(Long busId) {
         return driverRepository.findByBusId(busId);
-    }*/
+    }
 }

@@ -26,7 +26,21 @@ public class Driver {
     private int ratingCnt;
 
     /* 비지니스 로직 */
+
+    // 버스 변경
     public void changeBus(Bus bus) {
         this.bus = bus;
+    }
+
+    // 평점 계산
+    public void calculateRatings(double score) {
+
+        double sum = ratingCnt * ratingScore;
+
+        sum += score;
+
+        ratingCnt++;
+
+        ratingScore = sum / ratingCnt;
     }
 }

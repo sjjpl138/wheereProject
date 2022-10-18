@@ -25,11 +25,10 @@ public class DriverRepository {
         return em.find(Driver.class, driverId);
     }
 
-    // 버스 번호, 배차순번, 방향으로 구분
-    /*public List<Driver> findByBusId(Long busId) {
+    public Driver findByBusId(Long busId) {
         return em.createQuery("select d from Driver d join d.bus  b where b.id = :busId", Driver.class)
-                .setParameter("busId", busId).getResultList();
-    }*/
+                .setParameter("busId", busId).getSingleResult();
+    }
 
     public List<Driver> findByName(String name) {
         return em.createQuery("select d from Driver d where d.name = :name", Driver.class)

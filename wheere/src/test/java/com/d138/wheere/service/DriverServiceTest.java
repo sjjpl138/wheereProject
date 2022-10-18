@@ -90,4 +90,35 @@ public class DriverServiceTest {
         assertThat(findDriver.getBus().getId()).isEqualTo(2L);
         assertThat(findDriver.getBus()).isInstanceOf(Bus.class);
     }
+
+    @Test
+    public void 평점_반영() {
+
+        // Given
+        Bus bus1 = new Bus();
+        bus1.setId(1L);
+        em.persist(bus1);
+
+        Driver driver = new Driver();
+        driver.setId("1L");
+        driver.setRatingScore(0);
+        driver.setBus(bus1);
+        driver.setRatingCnt(0);
+        driver.setName("정영한");
+        em.persist(driver);
+
+        // When
+        driverService.reflectScores(1L, 4.0);
+        driverService.reflectScores(1L, 5.0);
+        driverService.reflectScores(1L, 3.0);
+
+        em.flush();
+        em.clear();
+
+        Driver findDriver = driverService.findDriver(driver.getId());
+
+        // Then
+        assertThat(findDriver.getRatingScore()).isEqualTo(4.0);
+
+    }
 }
