@@ -1,5 +1,6 @@
 package com.d138.wheere.repository;
 
+import com.d138.wheere.domain.BusState;
 import com.d138.wheere.domain.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -38,7 +39,7 @@ public class ReservationRepository {
                 .setParameter("busId", busId).getResultList();
     }
 
-    public List<Reservation> checkScheduleDuplication(String memberId, String busNumber, int busAllocationSeq, String direction) {
+    public List<Reservation> checkScheduleDuplication(String memberId, String busNumber, int busAllocationSeq, BusState direction) {
 
         return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.busNumber = :bNumber and b.busAllocationSeq = :bAllocationSeq and b.direction = :bDirection and m.id = :mId", Reservation.class)
                 .setParameter("bNumber", busNumber)

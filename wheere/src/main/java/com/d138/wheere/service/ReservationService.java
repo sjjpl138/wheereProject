@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ReservationService {
      */
     @Transactional
     public Long saveReservation(String memberId, Long busId, String startPoint, String endPoint
-            , LocalDateTime reservationDate) {
+            , LocalDate reservationDate) {
 
         // 엔티티 조회
         Member member = memberRepository.findOne(memberId);

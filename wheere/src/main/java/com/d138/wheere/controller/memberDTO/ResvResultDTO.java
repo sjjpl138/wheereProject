@@ -4,6 +4,7 @@ import com.d138.wheere.domain.Reservation;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,13 +12,13 @@ import java.time.LocalDateTime;
 public class ResvResultDTO {
     private String  uid;
     private Long rid;
-    private LocalDateTime rTime;
+    private LocalDate rTime;
     private String rStart;
     private String rEnd;
     private boolean rIsPaid;
     private String bNumber;
 
-    public ResvResultDTO(String uid, Long rid, LocalDateTime rTime, String rStart, String rEnd, boolean rIsPaid, String bNumber) {
+    public ResvResultDTO(String uid, Long rid, LocalDate rTime, String rStart, String rEnd, boolean rIsPaid, String bNumber) {
         this.uid = uid;
         this.rid = rid;
         this.rTime = rTime;

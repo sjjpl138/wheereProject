@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
 
         // Then
         Reservation findReservation = reservationRepository.findOne(reservationId);
@@ -84,16 +85,16 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId1 = reservationService.saveReservation(memberId1, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
         Long reservationId2 = reservationService.saveReservation(memberId2, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
 
         // Then
         assertThrows(NotEnoughSeatsException.class, () ->
                 reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
-                        LocalDateTime.now())
+                        LocalDate.now())
         );
     }
 
@@ -108,7 +109,7 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
 
         // 예약 취소
         reservationService.cancelReservation(reservationId);
@@ -139,7 +140,7 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
 
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
@@ -171,13 +172,13 @@ public class ReservationServiceTest {
         Long busId5 = createBus("5");
 
         // When
-        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDate.now());
 
-        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now());
 
 
         // Then
@@ -216,11 +217,11 @@ public class ReservationServiceTest {
         Long busId1 = createBus("1");
 
         // When
-        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
 
         // Then
         assertThrows(IllegalStateException.class, () ->
-                reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDateTime.now())
+                reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDate.now())
         );
     }
 
@@ -242,7 +243,7 @@ public class ReservationServiceTest {
         bus.setBusNumber(busNum);
         bus.setTotalWheelChairSeats(2);
         bus.setLeftWheelChairSeats(2);
-        bus.setDirection("F");
+        bus.setDirection(BusState.FORWARD);
         bus.setBusAllocationSeq(1);
         em.persist(bus);
 

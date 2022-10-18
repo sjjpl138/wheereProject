@@ -23,7 +23,8 @@ public class Bus {
 
     private int busAllocationSeq;
 
-    private String direction;
+    @Enumerated(EnumType.STRING)
+    private BusState direction;
 
     private String busNumber;
 
