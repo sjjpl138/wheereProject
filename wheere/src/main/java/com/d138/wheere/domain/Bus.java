@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,18 +19,27 @@ public class Bus {
     @Column(name = "BUS_ID")
     private Long id;
 
+    // 버스 경로
     @OneToMany(mappedBy = "bus")
     private List<Route> routes = new ArrayList<>();
 
+    // 버스 배차 순번
     private int busAllocationSeq;
 
+    // 버스 방향 (정방향, 역방향)
     @Enumerated(EnumType.STRING)
     private BusState direction;
 
+    // 버스 번호
     private String busNumber;
 
+    // 버스 출발 시간
+    private LocalTime departureTime;
+
+    // 전체 교통 약자 좌석 수
     private int totalWheelChairSeats;
 
+    // 남은 교통 약자 좌석 수
     private int leftWheelChairSeats;
 
     /* 비지니스 로직 */

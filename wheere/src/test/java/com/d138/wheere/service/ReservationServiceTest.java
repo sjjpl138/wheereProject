@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -97,6 +98,8 @@ public class ReservationServiceTest {
         em.clear();
 
         // Then
+
+        // 좌석 부족으로 인한 예외 발생
         assertThrows(NotEnoughSeatsException.class, () ->
                 reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
                         LocalDate.now())
@@ -130,7 +133,7 @@ public class ReservationServiceTest {
         // 버스 좌석 수 증가
         assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);
 
-        findReservation.canCancel();
+//        findReservation.canCancel();
 
         // 남은 좌석 수가 이미 total 일 경우 예약을 취소해도 남은 좌석 수가 증가하지 않는다.
         /*reservationService.cancelReservation(reservationId);
@@ -150,9 +153,15 @@ public class ReservationServiceTest {
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
                 LocalDate.now());
 
+        em.flush();
+        em.clear();
+
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         reservationService.cancelReservation(reservationId);
+
+        em.flush();
+        em.clear();
 
         System.out.println("findReservation.getReservationState() = " + findReservation.getReservationState());
 
@@ -279,6 +288,7 @@ public class ReservationServiceTest {
         bus.setLeftWheelChairSeats(2);
         bus.setDirection(BusState.FORWARD);
         bus.setBusAllocationSeq(1);
+        bus.setDepartureTime(LocalTime.now().plusMinutes(10));
         em.persist(bus);
 
         return bus.getId();
