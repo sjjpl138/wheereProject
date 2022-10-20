@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,19 +22,15 @@ public class Reservation {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BUIS_ID")
+    @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
-    @NotNull
     private String startPoint;
 
-    @NotNull
     private String endPoint;
 
-    @NotNull
-    private LocalDateTime reservationDate;
+    private LocalDate reservationDate;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private ReservationState reservationState;
 
@@ -43,7 +40,7 @@ public class Reservation {
 
     public Reservation(Member member, Bus bus,
                        String startPoint, String endPoint,
-                       LocalDateTime reservationDate,
+                       LocalDate reservationDate,
                        ReservationState reservationState) {
         this.member = member;
         this.bus = bus;
@@ -56,7 +53,7 @@ public class Reservation {
     /* 생성 메서드 */
     public static Reservation createReservation(Member member, Bus bus,
                                                 String startPoint, String endPoint,
-                                                LocalDateTime reservationDate) {
+                                                LocalDate reservationDate) {
         Reservation reservation = new Reservation(member, bus, startPoint, endPoint,
                 reservationDate, ReservationState.WAITING);
 

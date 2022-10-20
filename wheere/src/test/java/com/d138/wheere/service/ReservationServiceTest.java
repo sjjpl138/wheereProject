@@ -12,7 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -43,17 +44,23 @@ public class ReservationServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
+    private Long mId = 0L;
+    private Long bId = 0L;
+
     @Test
     public void 예약하기() {
 
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
+
+        em.flush();
+        em.clear();
 
         // Then
         Reservation findReservation = reservationRepository.findOne(reservationId);
@@ -72,32 +79,37 @@ public class ReservationServiceTest {
         // 남은 버스 좌석이 0인 경우 예약이 불가해야 한다.
 
         // Given
-        Long memberId1 = createMember("정영한");
-        Long memberId2 = createMember("정연준");
-        Long memberId3 = createMember("손지민");
+        String memberId1 = createMember("정영한");
+        String memberId2 = createMember("정연준");
+        String memberId3 = createMember("손지민");
 
         Long busId = createBus("191");
         Bus findBus = busRepository.findOne(busId);
 
         // When
         Long reservationId1 = reservationService.saveReservation(memberId1, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
         Long reservationId2 = reservationService.saveReservation(memberId2, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
         System.out.println("findBus.getLeftWheelChairSeats() = " + findBus.getLeftWheelChairSeats());
 
+        em.flush();
+        em.clear();
+
         // Then
+
+        // 좌석 부족으로 인한 예외 발생
         assertThrows(NotEnoughSeatsException.class, () ->
                 reservationService.saveReservation(memberId3, busId, "구미역", "금오공대",
-                        LocalDateTime.now())
+                        LocalDate.now())
         );
     }
 
     @Test
     public void 예약_취소() {
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
@@ -105,10 +117,13 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
 
         // 예약 취소
         reservationService.cancelReservation(reservationId);
+
+        em.flush();
+        em.clear();
 
         // Then
         // 예약 상태 변경 (xxx -> CANCEL) 확인
@@ -118,7 +133,7 @@ public class ReservationServiceTest {
         // 버스 좌석 수 증가
         assertThat(findBus.getLeftWheelChairSeats()).isEqualTo(2);
 
-        findReservation.canCancel();
+//        findReservation.canCancel();
 
         // 남은 좌석 수가 이미 total 일 경우 예약을 취소해도 남은 좌석 수가 증가하지 않는다.
         /*reservationService.cancelReservation(reservationId);
@@ -128,7 +143,7 @@ public class ReservationServiceTest {
     @Test
     public void 예약_취소_예외() {
         // Given
-        Long memberId = createMember("정영한");
+        String memberId = createMember("정영한");
 
         Long busId = createBus("191");
 
@@ -136,13 +151,22 @@ public class ReservationServiceTest {
 
         // When
         Long reservationId = reservationService.saveReservation(memberId, busId, "구미역", "금오공대",
-                LocalDateTime.now());
+                LocalDate.now());
+
+        em.flush();
+        em.clear();
 
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         reservationService.cancelReservation(reservationId);
 
+        em.flush();
+        em.clear();
+
         System.out.println("findReservation.getReservationState() = " + findReservation.getReservationState());
+
+        em.flush();
+        em.clear();
 
         // Then
         // 이미 예약이 취소가 된 상태라면 예약 취소가 불가능해야 한다.
@@ -158,8 +182,8 @@ public class ReservationServiceTest {
         // 버스에 대한 모든 예약 조회
 
         // Given
-        Long memberId1 = createMember("정영한");
-        Long memberId2 = createMember("정연준");
+        String memberId1 = createMember("정영한");
+        String memberId2 = createMember("정연준");
 
         Long busId1 = createBus("1");
         Long busId2 = createBus("2");
@@ -168,13 +192,16 @@ public class ReservationServiceTest {
         Long busId5 = createBus("5");
 
         // When
-        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDateTime.now());
-        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDate.now());
 
-        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
 
 
         // Then
@@ -209,20 +236,41 @@ public class ReservationServiceTest {
     @Test
     public void 예약_제약_검증() {
         // Given
-        Long memberId1 = createMember("정영한");
+        String memberId1 = createMember("정영한");
         Long busId1 = createBus("1");
 
+        String memberId2 = createMember("정연준");
+        Long busId2 = createBus("2");
+
         // When
-        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDateTime.now());
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+        Long reservationId1 = reservationService.saveReservation(memberId2, busId2, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
+
+        reservationService.cancelReservation(reservationId1);
+
+        em.flush();
+        em.clear();
+
+        Long reservationId2 = reservationService.saveReservation(memberId2, busId2, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
 
         // Then
         assertThrows(IllegalStateException.class, () ->
-                reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDateTime.now())
+                reservationService.saveReservation(memberId1, busId1, "형곡2동", "금오공대", LocalDate.now())
         );
+
+        System.out.println("reservationId1 = " + reservationId1);
+        System.out.println("reservationId2 = " + reservationId2);
     }
 
-    private Long createMember(String name) {
+    private String createMember(String name) {
         Member member = new Member();
+        member.setId((mId++).toString());
         member.setName(name);
         member.setAge(22);
         member.setPhoneNumber("010-1111-1111");
@@ -234,11 +282,13 @@ public class ReservationServiceTest {
 
     private Long createBus(String busNum) {
         Bus bus = new Bus();
+        bus.setId(bId++);
         bus.setBusNumber(busNum);
         bus.setTotalWheelChairSeats(2);
         bus.setLeftWheelChairSeats(2);
-        bus.setDirection("F");
+        bus.setDirection(BusState.FORWARD);
         bus.setBusAllocationSeq(1);
+        bus.setDepartureTime(LocalTime.now().plusMinutes(10));
         em.persist(bus);
 
         return bus.getId();

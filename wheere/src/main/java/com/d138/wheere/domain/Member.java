@@ -1,6 +1,8 @@
 package com.d138.wheere.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -12,24 +14,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
 
     @Id
-    @GeneratedValue
     @Column(name = "MEMBER_ID")
-    private Long id;
+    private String id;
 
-    @NotNull
     private String name;
 
-    @NotNull
     // 버스 요금 구분을 위한 나이
     private int age;
 
-    @NotNull
     private String phoneNumber;
 
-    @NotNull
     private String sex; // 성별
 
     /* 비지니스 로직 */

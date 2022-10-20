@@ -12,20 +12,35 @@ import javax.validation.constraints.NotNull;
 public class Driver {
 
     @Id
-    @GeneratedValue
     @Column(name = "DRIVER_ID")
-    private Long id;
+    private String id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
-    @NotNull
     private String name;
 
-    @NotNull
     private double ratingScore;
 
-    @NotNull
     private int ratingCnt;
+
+    /* 비지니스 로직 */
+
+    // 버스 변경
+    public void changeBus(Bus bus) {
+        this.bus = bus;
+    }
+
+    // 평점 계산
+    public void calculateRatings(double score) {
+
+        double sum = ratingCnt * ratingScore;
+
+        sum += score;
+
+        ratingCnt++;
+
+        ratingScore = sum / ratingCnt;
+    }
 }

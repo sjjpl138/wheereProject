@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -14,13 +13,13 @@ public class MemberRepository {
 
     private final EntityManager em;
 
-    public Long save(Member member) {
+    public String save(Member member) {
         em.persist(member);
         return member.getId();
     }
 
-    public Member findOne(Long id) {
-        return em.find(Member.class, id);
+    public Member findOne(String memberId) {
+        return em.find(Member.class, memberId);
     }
 
     public List<Member> findAll() {
