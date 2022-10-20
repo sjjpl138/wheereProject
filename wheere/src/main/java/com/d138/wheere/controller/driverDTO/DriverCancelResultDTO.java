@@ -7,7 +7,12 @@ import lombok.Setter;
 @Setter
 public class DriverCancelResultDTO {
     private Long bid;
-    private String rid;
+    private Long rid;
     private boolean idCancelled;
 
+    public DriverCancelResultDTO(Long bid, Long rid, boolean idCancelled) {
+        this.bid = bid;
+        this.rid = rid;
+        this.idCancelled = idCancelled;
+    }
 }
