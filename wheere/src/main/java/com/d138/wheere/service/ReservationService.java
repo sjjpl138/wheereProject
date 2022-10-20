@@ -37,41 +37,33 @@ public class ReservationService {
         Member member = memberRepository.findOne(memberId);
         Bus bus = busRepository.findOne(busId);
 
-        // 버스 제약사항 추가
-        // 만약 동일한 배차순번, 버스Id를 가지면 예약 불가
+         /* 버스 제약사항 추가 */
+
+        // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
+        if (LocalTime.now().isAfter(bus.getDepartureTime())) {
+            throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
+        }
+
+        // 예약하려는 날짜에 사용자의 예약하려는 버스에 대한 예약들을 불러온다.
+        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
 
         // 동일 버스에 대한 기존 예약이 존재하고 기존 예약의 상태가 취소 상태가 아니라면 예약 불가
-        // 또는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
-        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId());
-        // reservations.stream().filter()를 활용해 예약 상태에 따라 거르고 시작하는 것이 좋을듯 하다.
-        if (((!reservations.isEmpty()) && (reservations.get(0).getReservationState() != ReservationState.CANCEL) && ()) || (LocalTime.now().isAfter(bus.getDepartureTime()))) {
-            throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
+        if (!reservations.isEmpty()) {
+            for (Reservation reservation : reservations) {
+                if(reservation.getReservationState() != ReservationState.CANCEL)
+                    throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
+            }
         }
 
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
 
         // 해당 버스 좌석 감소
-        /*try {
-            bus.subSeats();
-            System.out.println("bus.getLeftWheelChairSeats() = " + bus.getLeftWheelChairSeats());
-        } catch (NotEnoughSeatsException e) {
-            e.printStackTrace();
-            System.out.println("예약이 불가합니다.");
-        }*/
-
         bus.subSeats();
 
         reservationRepository.save(reservation);
 
         return reservation.getId();
-    }
-
-    private boolean checkReservationConditions(List<Reservation> reservations, Bus bus) {
-        if (((!reservations.isEmpty()) && (reservations.get(0).getReservationState() != ReservationState.CANCEL)) || (re&& (LocalTime.now().isAfter(bus.getDepartureTime())))) {
-            return true;
-        }
-        else return false;
     }
 
     /**

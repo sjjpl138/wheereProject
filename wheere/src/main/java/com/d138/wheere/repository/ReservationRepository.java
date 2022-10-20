@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -39,11 +40,13 @@ public class ReservationRepository {
                 .setParameter("busId", busId).getResultList();
     }
 
-    public List<Reservation> checkScheduleDuplication(String memberId, Long busId) {
+    // getSingleList(); 로 변경해도 되지 않을지 검사 (같은 날짜에 동일 버스를 여러 번 예약 취소했을 경우도 존재하므로 안 됨)
+    public List<Reservation> checkScheduleDuplication(String memberId, Long busId, LocalDate reservationDate) {
 
-        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.id = :busId and m.id = :memberId", Reservation.class)
+        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.id = :busId and m.id = :memberId and r.reservationDate = :reservationDate", Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("memberId", memberId)
+                .setParameter("reservationDate", reservationDate)
                 .getResultList();
     }
 }
