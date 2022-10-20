@@ -234,6 +234,34 @@ public class ReservationServiceTest {
     }
 
     @Test
+    public void checkScheduleDuplication_검증() {
+
+        // Given
+        String memberId1 = createMember("정영한");
+
+        Long busId1 = createBus("1");
+
+        // When
+        Long reservationId = reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+
+        reservationService.cancelReservation(reservationId);
+
+        Long reservationId2 = reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+
+        em.flush();
+        em.clear();
+
+        Reservation reservation = reservationRepository.findOne(reservationId);
+
+        // Then
+        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(memberId1, busId1, reservation.getReservationDate());
+
+        for (Reservation reservation1 : reservations) {
+            System.out.println("reservation1.getReservationDate() = " + reservation1.getReservationDate());
+        }
+    }
+
+    @Test
     public void 예약_제약_검증() {
         // Given
         String memberId1 = createMember("정영한");
