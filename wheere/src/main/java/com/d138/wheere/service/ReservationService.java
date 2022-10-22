@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -36,27 +37,28 @@ public class ReservationService {
         Member member = memberRepository.findOne(memberId);
         Bus bus = busRepository.findOne(busId);
 
-        // 버스 제약사항 추가
-        // 만약 동일한 배차순번, 버스Id를 가지면 예약 불가
+         /* 버스 제약사항 추가 */
+
+        // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
+        if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isBefore(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
+            throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
+        }
+
+        // 예약하려는 날짜에 사용자의 예약하려는 버스에 대한 예약들을 불러온다.
+        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
 
         // 동일 버스에 대한 기존 예약이 존재하고 기존 예약의 상태가 취소 상태가 아니라면 예약 불가
-        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId());
-        if ((!reservations.isEmpty()) && (reservations.get(0).getReservationState() != ReservationState.CANCEL)) {
-            throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
+        if (!reservations.isEmpty()) {
+            for (Reservation reservation : reservations) {
+                if(reservation.getReservationState() != ReservationState.CANCEL)
+                    throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
+            }
         }
 
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
 
         // 해당 버스 좌석 감소
-        /*try {
-            bus.subSeats();
-            System.out.println("bus.getLeftWheelChairSeats() = " + bus.getLeftWheelChairSeats());
-        } catch (NotEnoughSeatsException e) {
-            e.printStackTrace();
-            System.out.println("예약이 불가합니다.");
-        }*/
-
         bus.subSeats();
 
         reservationRepository.save(reservation);
@@ -73,6 +75,12 @@ public class ReservationService {
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         findReservation.cancel();
+    }
+
+    // 예약 거절
+    @Transactional
+    public void rejectReservation(Long reservationId) {
+        Reservation findReservation = reservationRepository.findOne(reservationId);
     }
 
     public Reservation findReservation(Long reservationId) {

@@ -26,8 +26,8 @@ public class DriverRepository {
     }
 
     public Driver findByBusId(Long busId) {
-        return em.createQuery("select d from Driver d join d.bus  b where b.id = :busId", Driver.class)
-                .setParameter("busId", busId).getSingleResult();
+        return em.createQuery("select d from Driver d join d.bus b where b.id = :busId", Driver.class)
+                .setParameter("busId", busId).getSingleResult(); // NoResultException 예외 처리 필요
     }
 
     public List<Driver> findByName(String name) {
