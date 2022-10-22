@@ -2,14 +2,17 @@ package com.d138.wheere.controller.driverDTO;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class DriverResvResultDTO {
     private Long rid;
-    private LocalDateTime rtime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate rtime;
     private String rstart;
     private String rend;
     private String rIsPaid;
@@ -20,7 +23,7 @@ public class DriverResvResultDTO {
     private String usex;
     private String uphonenumber;
 
-    public DriverResvResultDTO(Long rid, LocalDateTime rtime, String rstart, String rend, String rIsPaid, String uid, String uname, int uage, String usex, String uphonenumber) {
+    public DriverResvResultDTO(Long rid, LocalDate rtime, String rstart, String rend, String rIsPaid, String uid, String uname, int uage, String usex, String uphonenumber) {
         this.rid = rid;
         this.rtime = rtime;
         this.rstart = rstart;

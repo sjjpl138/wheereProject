@@ -3,6 +3,7 @@ package com.d138.wheere.domain;
 import com.d138.wheere.exception.NotEnoughSeatsException;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ public class Bus {
     private String busNumber;
 
     // 버스 출발 시간
+    @DateTimeFormat(pattern = "hh:mm:ss")
     private LocalTime departureTime;
 
     // 전체 교통 약자 좌석 수
