@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +58,10 @@ public class MemberController {
     @PostMapping("/resv")
     public ResponseEntity reserve(@ModelAttribute ReservationDTO reservationDTO) {
 
-        if (reservationService.findReservation(reservationDTO.getRid()) != null)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        System.out.println("손지민" + reservationDTO.getRdate());
+        System.out.println(LocalDate.now());
+        System.out.println(LocalDate.now().isBefore(reservationDTO.getRdate()));
+        System.out.println(LocalDate.now().isEqual(reservationDTO.getRdate()));
 
         reservationService.saveReservation(reservationDTO.getUid(), reservationDTO.getBid(), reservationDTO.getStartpoint(), reservationDTO.getEndpoint(), reservationDTO.getRdate());
         return new ResponseEntity(HttpStatus.OK);

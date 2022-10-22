@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 public class ReservationDTO {
-    private Long rid;
+    //private Long rid;
     private String uid;
     private  Long bid;
     private String startpoint;
@@ -16,8 +16,7 @@ public class ReservationDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate rdate;
 
-    public ReservationDTO(Long rid, String uid, Long bid, String startpoint, String endpoint, LocalDate rdate) {
-        this.rid = rid;
+    public ReservationDTO(String uid, Long bid, String startpoint, String endpoint, LocalDate rdate) {
         this.uid = uid;
         this.bid = bid;
         this.startpoint = startpoint;
