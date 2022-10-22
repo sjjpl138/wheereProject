@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,7 +19,12 @@ public class BusRepository {
         return bus.getId();
     }
 
+    // 에러 발생
     public Bus findOne(Long busId) {
-        return em.find(Bus.class, busId);
+        return em.createQuery("select b from Bus b where b.id = :busId", Bus.class)
+                .setParameter("busId", busId)
+                .getSingleResult();
+
+//        return em.find(Bus.class, busId);
     }
 }
