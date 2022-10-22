@@ -40,7 +40,7 @@ public class ReservationService {
          /* 버스 제약사항 추가 */
 
         // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
-        if (LocalTime.now().isAfter(bus.getDepartureTime())) {
+        if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isBefore(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
             throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
         }
 
@@ -75,6 +75,12 @@ public class ReservationService {
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         findReservation.cancel();
+    }
+
+    // 예약 거절
+    @Transactional
+    public void rejectReservation(Long reservationId) {
+        Reservation findReservation = reservationRepository.findOne(reservationId);
     }
 
     public Reservation findReservation(Long reservationId) {
