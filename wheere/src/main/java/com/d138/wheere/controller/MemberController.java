@@ -28,10 +28,10 @@ public class MemberController {
     private final DriverService driverService;
 
     //사용자 회원가입
-    @PostMapping("/signup")
-    public ResponseEntity signUpUser (@ModelAttribute MemberDTO memberDTO) {
+    @PostMapping("/{uid}")
+    public ResponseEntity signUpUser (@PathVariable("uid")String uid, @ModelAttribute MemberDTO memberDTO) {
 
-        Member member = new Member(memberDTO.getUid(), memberDTO.getUname(), memberDTO.getUage(), memberDTO.getUphonenumber(), memberDTO.getUsex());
+        Member member = new Member(uid, memberDTO.getUname(), memberDTO.getUage(), memberDTO.getUphonenumber(), memberDTO.getUsex());
 
         memberService.join(member);
 
@@ -39,13 +39,12 @@ public class MemberController {
     }
 
     //사용자 로그인
-    @PostMapping("/login")
-    public  ResponseEntity logInUser (@RequestParam("uid") String userId) {
+    @PostMapping("/{uid}/login")
+    public  ResponseEntity logInUser (@PathVariable("uid")String userId) {
 
         Member findMember = memberService.findMember(userId);
 
         MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setUid(findMember.getId());
         memberDTO.setUname(findMember.getName());
         memberDTO.setUage(findMember.getAge());
         memberDTO.setUphonenumber(findMember.getPhoneNumber());
@@ -58,8 +57,7 @@ public class MemberController {
     @PostMapping("/resv")
     public ResponseEntity reserve(@ModelAttribute ReservationDTO reservationDTO) {
 
-        //예약 조건 제한
-        if (reservationService.findReservation(reservationDTO.getRid()) == null)
+        if (reservationService.findReservation(reservationDTO.getRid()) != null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
         reservationService.saveReservation(reservationDTO.getUid(), reservationDTO.getBid(), reservationDTO.getStartpoint(), reservationDTO.getEndpoint(), reservationDTO.getRdate());
@@ -67,7 +65,7 @@ public class MemberController {
     }
 
     //예약 결과 조회
-    @GetMapping("/resv/result")
+    @GetMapping("/resvs")
     public List<ResvResultDTO> searchResv (@RequestParam("uid") String userId) {
 
         List<Reservation> reservationsByMember = reservationService.findReservationsByMember(userId);
@@ -76,7 +74,7 @@ public class MemberController {
 
         for (int i = 0; i < reservationsByMember.size(); i++) {
             Reservation r =reservationsByMember.get(i);
-            //isPaid 임의로 true
+            //isPaid 임의로 true,
             ResvResultDTO resvResultDTO = ResvResultDTO.createResResult(userId, true, r);
             resvResult.add(resvResultDTO);
         }
@@ -84,8 +82,8 @@ public class MemberController {
     }
 
     //예약 취소
-    @PostMapping("/resv/cancel")
-    public CancelResultDTO cancelResv(@RequestParam("uid") Long userId, @RequestParam("rid") Long resvId) {
+    @PostMapping("/resv/{uid}")
+    public CancelResultDTO cancelResv(@PathVariable("uid") String userId, @RequestParam("rid") Long resvId) {
         Reservation resv = reservationService.findReservation(resvId);
 
         // 취소 성공
@@ -98,20 +96,19 @@ public class MemberController {
     }
 
     //사용자 정보 수정
-    @PostMapping("/update")
-    public  ResponseEntity updateUser (@ModelAttribute MemberDTO member) {
+    @PutMapping("/{uid}")
+    public  ResponseEntity updateUser (@PathVariable("uid") String userId, @ModelAttribute MemberDTO member) {
 
         MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setUid(member.getUid());
         memberDTO.setUname(member.getUname());
         memberDTO.setUage(member.getUage());
         memberDTO.setUphonenumber(member.getUphonenumber());
         memberDTO.setUsex(member.getUsex());
 
-        Member findMember = memberService.findMember(member.getUid());
+        Member findMember = memberService.findMember(userId);
         String beforePhoneNumber = findMember.getPhoneNumber();
 
-        memberService.modifyPhoneNumber(member.getUid(), member.getUphonenumber());
+        memberService.modifyPhoneNumber(userId, member.getUphonenumber());
 
         //전화번호 변경이 안됐을 경우
         if (beforePhoneNumber.equals(findMember.getPhoneNumber()))

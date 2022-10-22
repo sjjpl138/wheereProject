@@ -23,11 +23,10 @@ public class DriverController {
     private final DriverService driverService;
     private final ReservationService reservationService;
 
-    @PostMapping("/signup")
+    @PostMapping("/{did}")
     public ResponseEntity<String> signUpDriver(DriverDTO driverDTO) {
 
         Driver driver = new Driver();
-        driver.setId(driverDTO.getDid());
         driver.setName(driverDTO.getDname());
         driver.setRatingScore(0);
         driver.setRatingCnt(0);
@@ -39,19 +38,19 @@ public class DriverController {
     }
 
     //로그인
-    @PostMapping("/login")
-    public  ResponseEntity logInDriver(@RequestParam("did") String driverId) {
+    @PostMapping("/{did}/login")
+    public  ResponseEntity logInDriver(@PathVariable("did") String driverId) {
         Driver findDriver = driverService.findDriver(driverId);
         if (findDriver == null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-        DriverDTO driverDTO = new DriverDTO(findDriver.getId(), findDriver.getName(), findDriver.getBus().getBusNumber());
+        DriverDTO driverDTO = new DriverDTO(driverId, findDriver.getName(), findDriver.getBus().getBusNumber());
         return new ResponseEntity(driverDTO, HttpStatus.OK);
     }
 
     //예약 결과 조회
-    @GetMapping("/resv/result")
-    public List<ResvResultDTO> resvResultByDriver (@RequestParam("did") String driverId) {
+    @GetMapping("/resvs")
+    public List<ResvResultDTO> resvResultByDriver (@PathVariable("did") String driverId) {
 
         Driver findDriver = driverService.findDriver(driverId);
         List<Reservation> reservationsByDriver = reservationService.findReservationsByBus(findDriver.getBus().getId());
@@ -67,7 +66,7 @@ public class DriverController {
     }
 
     //버스 기사 평점
-    @GetMapping("/rate/result")
+    @GetMapping("/rate")
     public double searchRatingResult(@RequestParam("did") String driverId) {
         Driver findDriver = driverService.findDriver(driverId);
 
@@ -76,12 +75,12 @@ public class DriverController {
         return findDriver.getRatingScore();
     }
 
-    @PostMapping("/resv/cancel")
-    public DriverCancelResultDTO cancelResvByDriver(@RequestParam("did") Long driverId, @RequestParam("rid")Long resvId) {
+    @PostMapping("/resv/{did}")
+    public DriverCancelResultDTO cancelResvByDriver(@PathVariable("did")Long driverId, @RequestParam("rid")Long resvId) {
         Reservation resv = reservationService.findReservation(resvId);
 
         if (resv.canCancel()) {
-            reservationService.cancelReservation(resv.getId());
+            reservationService.cancelReservation(resvId);
             return new DriverCancelResultDTO(resv.getBus().getId(),  resv.getId(),  true);
         }
         return new DriverCancelResultDTO(resv.getBus().getId(),  resv.getId(), false);
