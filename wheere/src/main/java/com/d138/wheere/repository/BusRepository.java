@@ -25,6 +25,7 @@ public class BusRepository {
                 .setParameter("busId", busId)
                 .getSingleResult();
 
-//        return em.find(Bus.class, busId);
     }
+
+    // 버스 번호, 배차 순번를 이용해 버스 조회
 }

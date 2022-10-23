@@ -35,7 +35,7 @@ public class ReservationService {
 
         // 엔티티 조회
         Member member = memberRepository.findOne(memberId);
-        Bus bus = busRepository.findOne(busId);
+        Bus bus = busRepository.findOne(busId); // 여기 버스가 버스 테이블의 버스가 아닌 예약에 참조된 버스여야 할듯??
 
          /* 버스 제약사항 추가 */
 
@@ -99,5 +99,10 @@ public class ReservationService {
     // 특정 버스에 대한 모든 예약 정보 조회
     public List<Reservation> findReservationsByBus(Long busId) {
         return reservationRepository.findByBus(busId);
+    }
+
+    // 특정 버스, 특정 날짜에 대한 예약 검색
+    public List<Reservation> checkScheduleByBus(Long busId, LocalDate date) {
+        return reservationRepository.findByBusAndDate(busId, date);
     }
 }

@@ -296,6 +296,32 @@ public class ReservationServiceTest {
         System.out.println("reservationId2 = " + reservationId2);
     }
 
+    @Test
+    public void 버스기사_예약_조회() {
+
+        // Given
+        String memberId1 = createMember("정영한");
+        String memberId2 = createMember("정연준");
+        String memberId3 = createMember("홍길동");
+
+        Long busId1 = createBus("1");
+
+        // When
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now().plusDays(10));
+        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now().plusDays(11));
+
+        List<Reservation> reservations = reservationService.checkScheduleByBus(busId1, LocalDate.now().plusDays(10));
+
+        // Then
+        for (Reservation reservation : reservations) {
+            System.out.println("reservation.getMember().getName() = " + reservation.getMember().getName());
+        }
+
+
+    }
+
     private String createMember(String name) {
         Member member = new Member();
         member.setId((mId++).toString());
