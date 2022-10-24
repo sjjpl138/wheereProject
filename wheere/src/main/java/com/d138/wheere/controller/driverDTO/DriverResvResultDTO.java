@@ -10,29 +10,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class DriverResvResultDTO {
-    private Long rid;
+    private Long rId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate rtime;
-    private String rstart;
-    private String rend;
+    private LocalDate rTime;
+    private String rStart;
+    private String rEnd;
     private String rIsPaid;
 
-    private String uid;
-    private String uname;
-    private int uage;
-    private String usex;
-    private String uphonenumber;
+    private String uId;
+    private String uName;
+    private int uAge;
+    private String uSex;
+    private String uNum;
 
-    public DriverResvResultDTO(Long rid, LocalDate rtime, String rstart, String rend, String rIsPaid, String uid, String uname, int uage, String usex, String uphonenumber) {
-        this.rid = rid;
-        this.rtime = rtime;
-        this.rstart = rstart;
-        this.rend = rend;
-        this.rIsPaid = rIsPaid;
-        this.uid = uid;
-        this.uname = uname;
-        this.uage = uage;
-        this.usex = usex;
-        this.uphonenumber = uphonenumber;
-    }
 }

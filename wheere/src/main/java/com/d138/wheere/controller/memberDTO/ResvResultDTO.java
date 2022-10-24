@@ -15,7 +15,7 @@ public class ResvResultDTO {
     private String  uid;
     private Long rid;
     @JsonFormat(shape = JsonFormat.Shape.STRING,  pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate rTime;
 
     private String rStart;
@@ -33,7 +33,7 @@ public class ResvResultDTO {
         this.bNumber = bNumber;
     }
 
-    public static  ResvResultDTO createResResult(String uid, boolean isPaid, Reservation reservation) {
-        return new ResvResultDTO(uid, reservation.getId(), reservation.getReservationDate(), reservation.getStartPoint(), reservation.getEndPoint(), isPaid, reservation.getBus().getBusNumber());
+    public static  ResvResultDTO createResResult(String uId, boolean isPaid, Reservation resv) {
+        return new ResvResultDTO(uId, resv.getId(), resv.getReservationDate(), resv.getStartPoint(), resv.getEndPoint(), isPaid, resv.getBus().getBusNumber());
     }
 }

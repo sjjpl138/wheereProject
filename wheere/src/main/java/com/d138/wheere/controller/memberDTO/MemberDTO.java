@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MemberDTO {
-    private String uname;
-    private int uage;
-    private String  usex;
-    private String uphonenumber;
+    private String uName;
+    private int uAge;
+    private String  uSex;
+    private String uNum;
 
 }
