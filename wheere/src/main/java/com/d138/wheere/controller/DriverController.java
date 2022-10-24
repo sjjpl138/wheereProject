@@ -23,34 +23,41 @@ public class DriverController {
     private final DriverService driverService;
     private final ReservationService reservationService;
 
-    @PostMapping("/{did}")
-    public ResponseEntity<String> signUpDriver(DriverDTO driverDTO) {
+    @PostMapping("/{dId}")
+    public ResponseEntity<String> signUpDriver(@PathVariable("dId")String driverId, @RequestParam("dName")String dName) {
 
         Driver driver = new Driver();
-        driver.setName(driverDTO.getDname());
+        driver.setId(driverId);
+        driver.setName(dName);
         driver.setRatingScore(0);
         driver.setRatingCnt(0);
         driver.setBus(null);
 
+        Driver findDriver = driverService.findDriver(driverId);
+        if (findDriver != null)
+            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
         driverService.join(driver);
-
-        return new ResponseEntity(driverDTO, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     //로그인
-    @PostMapping("/{did}/login")
-    public  ResponseEntity logInDriver(@PathVariable("did") String driverId) {
+    @PostMapping("/{dId}/login")
+    public  ResponseEntity logInDriver(@PathVariable("dId") String driverId) {
         Driver findDriver = driverService.findDriver(driverId);
         if (findDriver == null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-        DriverDTO driverDTO = new DriverDTO(driverId, findDriver.getName(), findDriver.getBus().getBusNumber());
+        DriverDTO driverDTO = new DriverDTO();
+        driverDTO.setDId(findDriver.getId());
+        driverDTO.setDName(findDriver.getName());
+        driverDTO.setBNumber(findDriver.getBus().getBusNumber());
+
         return new ResponseEntity(driverDTO, HttpStatus.OK);
     }
 
     //예약 결과 조회
     @GetMapping("/resvs")
-    public List<ResvResultDTO> resvResultByDriver (@PathVariable("did") String driverId) {
+    public List<ResvResultDTO> resvResultByDriver (@PathVariable("dId") String driverId) {
 
         Driver findDriver = driverService.findDriver(driverId);
         List<Reservation> reservationsByDriver = reservationService.findReservationsByBus(findDriver.getBus().getId());
@@ -67,23 +74,27 @@ public class DriverController {
 
     //버스 기사 평점
     @GetMapping("/rate")
-    public double searchRatingResult(@RequestParam("did") String driverId) {
+    public double searchRatingResult(@RequestParam("dId") String driverId) {
         Driver findDriver = driverService.findDriver(driverId);
 
-        //double rateResult = driverService.(findDriver.getBId());
+        double rateResult = driverService.checkRating(driverId);
 
         return findDriver.getRatingScore();
     }
 
-    @PostMapping("/resv/{did}")
-    public DriverCancelResultDTO cancelResvByDriver(@PathVariable("did")Long driverId, @RequestParam("rid")Long resvId) {
+    @PostMapping("/resv/{dId}")
+    public ResponseEntity cancelResvByDriver(@PathVariable("dId")Long driverId, @RequestParam("rId")Long resvId) {
         Reservation resv = reservationService.findReservation(resvId);
+
+        DriverCancelResultDTO cancelResult = new DriverCancelResultDTO();
+        cancelResult.setBId(resv.getBus().getId());
+        cancelResult.setRId(resvId);
 
         if (resv.canCancel()) {
             reservationService.cancelReservation(resvId);
-            return new DriverCancelResultDTO(resv.getBus().getId(),  resv.getId(),  true);
+            return new ResponseEntity(cancelResult, HttpStatus.OK);
         }
-        return new DriverCancelResultDTO(resv.getBus().getId(),  resv.getId(), false);
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
 }
