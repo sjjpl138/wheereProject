@@ -71,7 +71,6 @@ public class Reservation {
         }
 
         this.changeReservationState(ReservationState.CANCEL);
-        bus.addSeats();
     }
 
     public boolean canCancel() {
