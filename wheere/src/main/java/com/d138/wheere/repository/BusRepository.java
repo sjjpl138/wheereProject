@@ -21,10 +21,11 @@ public class BusRepository {
 
     // 에러 발생
     public Bus findOne(Long busId) {
-        return em.createQuery("select b from Bus b where b.id = :busId", Bus.class)
+        /*return em.createQuery("select b from Bus b where b.id = :busId", Bus.class)
                 .setParameter("busId", busId)
-                .getSingleResult();
+                .getSingleResult();*/
 
+        return em.find(Bus.class, busId);
     }
 
     // 버스 번호, 배차 순번를 이용해 버스 조회

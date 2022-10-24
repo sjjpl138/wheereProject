@@ -31,18 +31,18 @@ public class ReservationRepository {
 
     // MemberId로 예약 조회하기
     public List<Reservation> findByMember(String memberId) {
-        return em.createQuery("select r from Reservation r join r.member m where m.id = :memberId", Reservation.class)
+        return em.createQuery("select r from Reservation r join r.member m on m.id = :memberId", Reservation.class)
                 .setParameter("memberId", memberId).getResultList();
     }
 
     public List<Reservation> findByBus(Long busId) {
-        return em.createQuery("select r from Reservation r join r.bus b where b.id = :busId", Reservation.class)
+        return em.createQuery("select r from Reservation r join r.bus b on b.id = :busId", Reservation.class)
                 .setParameter("busId", busId).getResultList();
     }
 
     // 특정 버스, 특정 날짜에 대한 예약 검색
     public List<Reservation> findByBusAndDate(Long busId, LocalDate date) {
-        return em.createQuery("select r from Reservation r join r.bus b where b.id = :busId and r.reservationDate = :date", Reservation.class)
+        return em.createQuery("select r from Reservation r join r.bus b on b.id = :busId where r.reservationDate = :date", Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("date", date)
                 .getResultList();
@@ -50,7 +50,7 @@ public class ReservationRepository {
 
     public List<Reservation> checkScheduleDuplication(String memberId, Long busId, LocalDate reservationDate) {
 
-        return em.createQuery("select r from Reservation r join r.bus b join r.member m where b.id = :busId and m.id = :memberId and r.reservationDate = :reservationDate", Reservation.class)
+        return em.createQuery("select r from Reservation r join r.bus b join r.member m on b.id = :busId and m.id = :memberId where r.reservationDate = :reservationDate", Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("memberId", memberId)
                 .setParameter("reservationDate", reservationDate)

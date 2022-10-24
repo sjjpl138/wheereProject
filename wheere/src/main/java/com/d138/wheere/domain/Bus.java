@@ -41,22 +41,7 @@ public class Bus {
     // 전체 교통 약자 좌석 수
     private int totalWheelChairSeats;
 
-    // 남은 교통 약자 좌석 수
-    private int leftWheelChairSeats;
-
-    /* 비지니스 로직 */
-    public void addSeats() {
-        int restSeats = this.leftWheelChairSeats + 1;
-        if (restSeats <= totalWheelChairSeats) {
-            this.leftWheelChairSeats = restSeats;
-        }
-    }
-
-    public void subSeats() {
-        int restSeats = this.leftWheelChairSeats - 1;
-        if (restSeats < 0) {
-            throw new NotEnoughSeatsException("남은 좌석이 없습니다.");
-        }
-        this.leftWheelChairSeats = restSeats;
-    }
+    // 좌석 -> 버스에는 굳이 없어도 될 듯??
+    /*@OneToMany(mappedBy = "bus")
+    private List<Seat> seats = new ArrayList<>();*/
 }

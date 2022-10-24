@@ -203,7 +203,6 @@ public class DriverServiceTest {
         bus.setId(bId++);
         bus.setBusNumber(busNum);
         bus.setTotalWheelChairSeats(2);
-        bus.setLeftWheelChairSeats(2);
         bus.setDirection(BusState.FORWARD);
         bus.setBusAllocationSeq(1);
         bus.setDepartureTime(LocalTime.now().plusMinutes(10));

@@ -1,13 +1,11 @@
 package com.d138.wheere.service;
 
-import com.d138.wheere.domain.Bus;
-import com.d138.wheere.domain.Member;
-import com.d138.wheere.domain.Reservation;
-import com.d138.wheere.domain.ReservationState;
+import com.d138.wheere.domain.*;
 import com.d138.wheere.exception.NotEnoughSeatsException;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
+import com.d138.wheere.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +23,8 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final MemberRepository memberRepository;
     private final BusRepository busRepository;
+
+    private final SeatRepository seatRepository;
 
     /**
      * 예약
@@ -57,12 +57,19 @@ public class ReservationService {
 
         // 예약 생성
         Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
-
         // 해당 버스 좌석 감소
-        bus.subSeats();
+        // 예약하려는 날짜, 버스에 대한 Seat이 만들어져 있지 않으면 생성??
+        // 날짜와 버스Id로 Seat 조회하는 메서드 작성해야 할 듯
+        List<Seat> findSeat = seatRepository.findByBusAndDate(busId, reservationDate);
+        if (findSeat.isEmpty()) {
+            Seat seat = Seat.createSeat(bus, reservationDate, bus.getTotalWheelChairSeats());
+            seat.subSeats();
+            seatRepository.save(seat);
+        } else {
+            findSeat.get(0).subSeats();
+        }
 
         reservationRepository.save(reservation);
-
         return reservation.getId();
     }
 
