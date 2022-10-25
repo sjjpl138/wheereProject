@@ -2,25 +2,19 @@ package com.d138.wheere.controller.memberDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 public class ReservationDTO {
-    //private Long rid;
-    private String uid;
-    private  Long bid;
-    private String startpoint;
-    private String endpoint;
+    private String uId;
+    private  Long bId;
+    private String rStart;
+    private String rEnd;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate rdate;
+    private LocalDate rDate;
 
-    public ReservationDTO(String uid, Long bid, String startpoint, String endpoint, LocalDate rdate) {
-        this.uid = uid;
-        this.bid = bid;
-        this.startpoint = startpoint;
-        this.endpoint = endpoint;
-        this.rdate = rdate;
-    }
 }

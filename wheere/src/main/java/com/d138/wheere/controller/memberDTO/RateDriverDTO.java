@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CancelResultDTO {
-    private String uid;
-    private Long rid;
-
+public class RateDriverDTO {
+    private String uId;
+    private String dId;
+    private Long rate;
 }

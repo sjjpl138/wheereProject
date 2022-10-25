@@ -1,9 +1,6 @@
 package com.d138.wheere.controller;
 
-import com.d138.wheere.controller.memberDTO.CancelResultDTO;
-import com.d138.wheere.controller.memberDTO.MemberDTO;
-import com.d138.wheere.controller.memberDTO.ReservationDTO;
-import com.d138.wheere.controller.memberDTO.ResvResultDTO;
+import com.d138.wheere.controller.memberDTO.*;
 import com.d138.wheere.domain.Driver;
 import com.d138.wheere.domain.Member;
 import com.d138.wheere.domain.Reservation;
@@ -29,47 +26,57 @@ public class MemberController {
     private final DriverService driverService;
 
     //사용자 회원가입
-    @PostMapping("/{uid}")
-    public ResponseEntity signUpUser (@PathVariable("uid")String uid, @ModelAttribute MemberDTO memberDTO) {
+    @PostMapping("/{uId}")
+    public ResponseEntity signUpUser (@PathVariable("uId")String userId, @ModelAttribute MemberDTO memberDTO) {
 
-        Member member = new Member(uid, memberDTO.getUname(), memberDTO.getUage(), memberDTO.getUphonenumber(), memberDTO.getUsex());
+        String name = memberDTO.getUName();
+        int age = memberDTO.getUAge();
+        String phoneNum = memberDTO.getUNum();
+        String sex = memberDTO.getUSex();
 
+        if (memberService.findMember(userId) != null)
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
+        Member member = new Member(userId, name, age, phoneNum, sex);
         memberService.join(member);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
     //사용자 로그인
-    @PostMapping("/{uid}/login")
-    public  ResponseEntity logInUser (@PathVariable("uid")String userId) {
+    @PostMapping("/{uId}/login")
+    public  ResponseEntity logInUser (@PathVariable("uId")String userId) {
 
         Member findMember = memberService.findMember(userId);
 
         MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setUname(findMember.getName());
-        memberDTO.setUage(findMember.getAge());
-        memberDTO.setUphonenumber(findMember.getPhoneNumber());
-        memberDTO.setUsex(findMember.getSex());
+        memberDTO.setUName(findMember.getName());
+        memberDTO.setUAge(findMember.getAge());
+        memberDTO.setUNum(findMember.getPhoneNumber());
+        memberDTO.setUSex(findMember.getSex());
 
         return new ResponseEntity(memberDTO, HttpStatus.OK);
     }
 
     //예약하기
     @PostMapping("/resv")
-    public ResponseEntity reserve(@ModelAttribute ReservationDTO reservationDTO) {
+    public ResponseEntity reserve(@ModelAttribute ReservationDTO resvDTO) {
 
-        System.out.println("손지민" + reservationDTO.getRdate());
-        System.out.println(LocalDate.now());
-        System.out.println(LocalDate.now().isBefore(reservationDTO.getRdate()));
-        System.out.println(LocalDate.now().isEqual(reservationDTO.getRdate()));
+        String uId = resvDTO.getUId();
+        Long bId = resvDTO.getBId();
+        String rStart = resvDTO.getRStart();
+        String rEnd = resvDTO.getREnd();
+        LocalDate rDate = resvDTO.getRDate();
 
-        reservationService.saveReservation(reservationDTO.getUid(), reservationDTO.getBid(), reservationDTO.getStartpoint(), reservationDTO.getEndpoint(), reservationDTO.getRdate());
+        System.out.println("uId" + uId);
+        System.out.println("bId = " + bId);
+        reservationService.saveReservation(uId, bId, rStart, rEnd, rDate);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     //예약 결과 조회
     @GetMapping("/resvs")
-    public List<ResvResultDTO> searchResv (@RequestParam("uid") String userId) {
+    public List<ResvResultDTO> searchResv (@RequestParam("uId") String userId) {
 
         List<Reservation> reservationsByMember = reservationService.findReservationsByMember(userId);
 
@@ -85,33 +92,36 @@ public class MemberController {
     }
 
     //예약 취소
-    @PostMapping("/resv/{uid}")
-    public CancelResultDTO cancelResv(@PathVariable("uid") String userId, @RequestParam("rid") Long resvId) {
-        Reservation resv = reservationService.findReservation(resvId);
+    @PostMapping("/resv/{uId}")
+    public ResponseEntity cancelResv(@PathVariable("uId") String userId,  Long rId) {
+        Reservation resv = reservationService.findReservation(rId);
 
+        CancelResultDTO cancelResult = new CancelResultDTO();
+        cancelResult.setRid(rId);
+        cancelResult.setUid(userId);
         // 취소 성공
         if (resv.canCancel()) {
-            reservationService.cancelReservation(resv.getId());
-            return new CancelResultDTO(resv.getMember().getId(), resv.getId(), true);
+            reservationService.cancelReservation(rId);
+            return  new ResponseEntity(cancelResult, HttpStatus.OK);
         }
         //취소 실패
-        return new CancelResultDTO(resv.getMember().getId(), resv.getId(), false);
+        return new ResponseEntity(cancelResult, HttpStatus.BAD_REQUEST);
     }
 
     //사용자 정보 수정
-    @PutMapping("/{uid}")
-    public  ResponseEntity updateUser (@PathVariable("uid") String userId, @ModelAttribute MemberDTO member) {
+    @PutMapping("/{uId}")
+    public  ResponseEntity updateUser (@PathVariable("uId") String userId, @ModelAttribute MemberDTO member) {
 
         MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setUname(member.getUname());
-        memberDTO.setUage(member.getUage());
-        memberDTO.setUphonenumber(member.getUphonenumber());
-        memberDTO.setUsex(member.getUsex());
+        memberDTO.setUName(member.getUName());
+        memberDTO.setUAge(member.getUAge());
+        memberDTO.setUNum(member.getUNum());
+        memberDTO.setUSex(member.getUSex());
 
         Member findMember = memberService.findMember(userId);
         String beforePhoneNumber = findMember.getPhoneNumber();
 
-        memberService.modifyPhoneNumber(userId, member.getUphonenumber());
+        memberService.modifyPhoneNumber(userId, member.getUNum());
 
         //전화번호 변경이 안됐을 경우
         if (beforePhoneNumber.equals(findMember.getPhoneNumber()))
@@ -121,18 +131,16 @@ public class MemberController {
 
     //버스 기사 평점
     @PostMapping("/rate")
-    public  ResponseEntity rateDriver (@RequestParam("uid") String userId, @RequestParam("did") String driverId, @RequestParam("score") Long score) {
+    public  ResponseEntity rateDriver (@ModelAttribute RateDriverDTO rateDriverDTO) {
 
-        Driver findDriver = driverService.findDriver(driverId);
+        Driver findDriver = driverService.findDriver(rateDriverDTO.getDId());
         int beforeCnt = findDriver.getRatingCnt();
 
-        driverService.reflectScores(findDriver.getBus().getId(), score);
+        driverService.reflectScores(findDriver.getBus().getId(), rateDriverDTO.getRate());
 
         if (findDriver.getRatingCnt() == beforeCnt)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-
 }
