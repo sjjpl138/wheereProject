@@ -32,9 +32,9 @@ public class MemberController {
     @PostMapping("/{uid}")
     public ResponseEntity signUpUser (@PathVariable("uid")String uid, @ModelAttribute MemberDTO memberDTO) {
 
-        Member member = new Member(uid, memberDTO.getUname(), memberDTO.getUage(), memberDTO.getUphonenumber(), memberDTO.getUsex());
+//        Member member = new Member(uid, memberDTO.getUname(), memberDTO.getUage(), memberDTO.getUphonenumber(), memberDTO.getUsex());
 
-        memberService.join(member);
+//        memberService.join(member);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -47,7 +47,7 @@ public class MemberController {
 
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setUname(findMember.getName());
-        memberDTO.setUage(findMember.getAge());
+//        memberDTO.setUage(findMember.getAge());
         memberDTO.setUphonenumber(findMember.getPhoneNumber());
         memberDTO.setUsex(findMember.getSex());
 

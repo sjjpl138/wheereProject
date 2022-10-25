@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.*;
@@ -190,7 +191,7 @@ public class DriverServiceTest {
         Member member = new Member();
         member.setId((mId++).toString());
         member.setName(name);
-        member.setAge(22);
+        member.setBirthDate(LocalDate.of(1999, 03, 02));
         member.setPhoneNumber("010-1111-1111");
         member.setSex("female");
 
