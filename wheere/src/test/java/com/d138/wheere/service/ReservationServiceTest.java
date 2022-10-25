@@ -2,10 +2,7 @@ package com.d138.wheere.service;
 
 import com.d138.wheere.domain.*;
 import com.d138.wheere.exception.NotEnoughSeatsException;
-import com.d138.wheere.repository.BusRepository;
-import com.d138.wheere.repository.MemberRepository;
-import com.d138.wheere.repository.ReservationRepository;
-import com.d138.wheere.repository.SeatRepository;
+import com.d138.wheere.repository.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -331,7 +328,7 @@ public class ReservationServiceTest {
         Member member = new Member();
         member.setId((mId++).toString());
         member.setName(name);
-        member.setAge(22);
+        member.setBirthDate(LocalDate.of(1999, 03, 02));
         member.setPhoneNumber("010-1111-1111");
         member.setSex("female");
 
