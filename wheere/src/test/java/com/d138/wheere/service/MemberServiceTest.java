@@ -63,6 +63,7 @@ public class MemberServiceTest {
         member.setBirthDate(LocalDate.of(1999, 03, 02));
         member.setName("홍길동");
         member.setPhoneNumber("010-1111-1111");
+        member.setBirthDate(LocalDate.of(1999, 03, 02));
         member.setId("5");
 
         // When
