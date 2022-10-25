@@ -21,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
+
     private final MemberService memberService;
     private final ReservationService reservationService;
     private final DriverService driverService;
@@ -55,6 +56,8 @@ public class MemberController {
         memberDTO.setUNum(findMember.getPhoneNumber());
         memberDTO.setUSex(findMember.getSex());
 
+        //버스
+
         return new ResponseEntity(memberDTO, HttpStatus.OK);
     }
 
@@ -68,8 +71,6 @@ public class MemberController {
         String rEnd = resvDTO.getREnd();
         LocalDate rDate = resvDTO.getRDate();
 
-        System.out.println("uId" + uId);
-        System.out.println("bId = " + bId);
         reservationService.saveReservation(uId, bId, rStart, rEnd, rDate);
         return new ResponseEntity(HttpStatus.OK);
     }
