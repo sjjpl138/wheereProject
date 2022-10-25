@@ -1,9 +1,6 @@
 package com.d138.wheere.controller;
 
-import com.d138.wheere.controller.memberDTO.CancelResultDTO;
-import com.d138.wheere.controller.memberDTO.MemberDTO;
-import com.d138.wheere.controller.memberDTO.ReservationDTO;
-import com.d138.wheere.controller.memberDTO.ResvResultDTO;
+import com.d138.wheere.controller.memberDTO.*;
 import com.d138.wheere.domain.Driver;
 import com.d138.wheere.domain.Member;
 import com.d138.wheere.domain.Reservation;
@@ -71,7 +68,8 @@ public class MemberController {
         String rEnd = resvDTO.getREnd();
         LocalDate rDate = resvDTO.getRDate();
 
-
+        System.out.println("uId" + uId);
+        System.out.println("bId = " + bId);
         reservationService.saveReservation(uId, bId, rStart, rEnd, rDate);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -95,15 +93,15 @@ public class MemberController {
 
     //예약 취소
     @PostMapping("/resv/{uId}")
-    public ResponseEntity cancelResv(@PathVariable("uId") String userId, @RequestParam("rId") Long resvId) {
-        Reservation resv = reservationService.findReservation(resvId);
+    public ResponseEntity cancelResv(@PathVariable("uId") String userId,  Long rId) {
+        Reservation resv = reservationService.findReservation(rId);
 
         CancelResultDTO cancelResult = new CancelResultDTO();
-        cancelResult.setRid(resvId);
+        cancelResult.setRid(rId);
         cancelResult.setUid(userId);
         // 취소 성공
         if (resv.canCancel()) {
-            reservationService.cancelReservation(resv.getId());
+            reservationService.cancelReservation(rId);
             return  new ResponseEntity(cancelResult, HttpStatus.OK);
         }
         //취소 실패
@@ -133,12 +131,12 @@ public class MemberController {
 
     //버스 기사 평점
     @PostMapping("/rate")
-    public  ResponseEntity rateDriver (@RequestParam("uId") String userId, @RequestParam("dId") String driverId, @RequestParam("rate") Long rate) {
+    public  ResponseEntity rateDriver (@ModelAttribute RateDriverDTO rateDriverDTO) {
 
-        Driver findDriver = driverService.findDriver(driverId);
+        Driver findDriver = driverService.findDriver(rateDriverDTO.getDId());
         int beforeCnt = findDriver.getRatingCnt();
 
-        driverService.reflectScores(findDriver.getBus().getId(), rate);
+        driverService.reflectScores(findDriver.getBus().getId(), rateDriverDTO.getRate());
 
         if (findDriver.getRatingCnt() == beforeCnt)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
