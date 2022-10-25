@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import java.time.LocalDate;
-
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -32,7 +30,7 @@ public class MemberServiceTest {
         // Given
         Member member = new Member();
         member.setSex("F");
-        member.setBirthDate(LocalDate.of(1999, 03, 02));
+        member.setAge(22);
         member.setName("홍길동");
         member.setPhoneNumber("010-1111-1111");
         member.setId("1L");
@@ -48,7 +46,7 @@ public class MemberServiceTest {
         // Then
 
         assertThat(findMember.getId()).isEqualTo("1L");
-        assertThat(findMember.getBirthDate()).isEqualTo(LocalDate.of(1999, 03, 02));
+        assertThat(findMember.getAge()).isEqualTo(22);
         assertThat(findMember.getSex()).isEqualTo("F");
         assertThat(findMember.getName()).isEqualTo("홍길동");
         assertThat(findMember.getPhoneNumber()).isEqualTo("010-1111-1111");
@@ -60,7 +58,7 @@ public class MemberServiceTest {
         // Given
         Member member = new Member();
         member.setSex("F");
-        member.setBirthDate(LocalDate.of(1999, 03, 02));
+        member.setAge(22);
         member.setName("홍길동");
         member.setPhoneNumber("010-1111-1111");
         member.setId("5");

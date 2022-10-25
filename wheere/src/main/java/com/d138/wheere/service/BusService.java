@@ -1,6 +1,5 @@
 package com.d138.wheere.service;
 
-import com.d138.wheere.domain.Bus;
 import com.d138.wheere.domain.Reservation;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.ReservationRepository;
@@ -18,8 +17,4 @@ public class BusService {
     private final BusRepository busRepository;
 
     private final ReservationRepository reservationRepository;
-
-    /*public List<Bus> findAllBus() {
-
-    }*/
 }
