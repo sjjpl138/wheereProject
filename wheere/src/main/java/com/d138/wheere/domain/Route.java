@@ -1,6 +1,8 @@
 package com.d138.wheere.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,6 +10,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Route {
 
     @Id
@@ -18,9 +22,10 @@ public class Route {
     @JoinColumn(name = "BUS_ID")
     private Bus bus;
 
-    private String station;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATION_ID")
+    private Station station;
 
     private int stationSeq;
 
-    /* 연관관계 편의 메서드 */
 }
