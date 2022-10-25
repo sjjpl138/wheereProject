@@ -52,17 +52,26 @@ public class RouteRepositoryTest {
         em.persist(route3);
         em.persist(route4);
 
+        Route route5 = new Route(5L, bus2, station1, 1);
+        Route route6 = new Route(6L, bus2, station2, 2);
+        Route route7 = new Route(7L, bus2, station3, 3);
+        Route route8 = new Route(8L, bus2, station4, 4);
+        em.persist(route5);
+        em.persist(route6);
+        em.persist(route7);
+        em.persist(route8);
+
         // When
         em.flush();
         em.clear();
 
         // Then
 
-        List<Route> busRoute = routeRepository.findBusRoute(1L);
+        /*List<Route> busRoute = routeRepository.findBusRoute(1L);
 
         for (Route route : busRoute) {
             System.out.println("route.getStation().getName( = " + route.getStation().getName());
-        }
+        }*/
 
         List<Route> busRouteByBus = routeRepository.findBusRouteByBus("191", BusState.FORWARD);
 
