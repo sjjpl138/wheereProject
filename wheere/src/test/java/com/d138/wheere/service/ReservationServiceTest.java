@@ -331,7 +331,7 @@ public class ReservationServiceTest {
         Member member = new Member();
         member.setId((mId++).toString());
         member.setName(name);
-        member.setAge(22);
+        member.setBirthDate(LocalDate.of(1999, 03, 02));
         member.setPhoneNumber("010-1111-1111");
         member.setSex("female");
 

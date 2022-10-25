@@ -82,6 +82,9 @@ public class ReservationService {
         Reservation findReservation = reservationRepository.findOne(reservationId);
 
         findReservation.cancel();
+
+        // 파라미터로 예약 날짜도 받아와 Seat 객체 찾고 버스 좌석 증가시켜야 함
+
     }
 
     // 예약 거절
