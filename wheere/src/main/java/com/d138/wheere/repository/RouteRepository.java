@@ -21,7 +21,7 @@ public class RouteRepository {
                 .getResultList();
     }
 
-    public List<Route> findBusRouteByBus(String busNum, BusState busState) {
+    public List<Route> findBusRouteByBusInfo(String busNum, BusState busState) {
 
         return em.createQuery("select r from Route r join fetch r.station join r.bus b on b.busNumber = :bNum and b.direction = :bDir and b.busAllocationSeq = 1 order by r.stationSeq", Route.class)
                 .setParameter("bNum", busNum)

@@ -73,7 +73,7 @@ public class RouteRepositoryTest {
             System.out.println("route.getStation().getName( = " + route.getStation().getName());
         }*/
 
-        List<Route> busRouteByBus = routeRepository.findBusRouteByBus("191", BusState.FORWARD);
+        List<Route> busRouteByBus = routeRepository.findBusRouteByBusInfo("191", BusState.FORWARD);
 
         for (Route routeByBus : busRouteByBus) {
             System.out.println("routeByBus.getStation().getName() = " + routeByBus.getStation().getName());
