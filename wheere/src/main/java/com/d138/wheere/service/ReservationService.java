@@ -1,7 +1,6 @@
 package com.d138.wheere.service;
 
 import com.d138.wheere.domain.*;
-import com.d138.wheere.exception.NotEnoughSeatsException;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -40,7 +38,7 @@ public class ReservationService {
          /* 버스 제약사항 추가 */
 
         // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
-        if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isAfter(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
+        if (compareBusDepartureTime(bus, reservationDate)) {
             throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
         }
 
@@ -71,6 +69,14 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
         return reservation.getId();
+    }
+
+    public boolean compareBusDepartureTime(Bus bus, LocalDate reservationDate) {
+        if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isAfter(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
+            return true;
+        }
+
+        else return false;
     }
 
     /**
