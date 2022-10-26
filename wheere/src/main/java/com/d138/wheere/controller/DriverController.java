@@ -8,7 +8,7 @@ import com.d138.wheere.domain.Reservation;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
+//import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +43,8 @@ public class DriverController {
 
     //로그인
     @PostMapping("/{dId}/login")
-    public  ResponseEntity logInDriver(@PathVariable("dId") String driverId, String bNumber) {
+    public  ResponseEntity logInDriver(@PathVariable("dId") String driverId) {
         Driver findDriver = driverService.findDriver(driverId);
-        //bNumber랑 did를 통해서 bid 받아오기
-        //버스 변경
-        //driverService.changeBus(driverId, busId);
 
         if (findDriver == null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -55,7 +52,6 @@ public class DriverController {
         DriverDTO driverDTO = new DriverDTO();
         driverDTO.setDId(findDriver.getId());
         driverDTO.setDName(findDriver.getName());
-        driverDTO.setBNumber(bNumber);
 
         return new ResponseEntity(driverDTO, HttpStatus.OK);
     }
@@ -79,7 +75,7 @@ public class DriverController {
         return resvResult;
     }
 
-    //버스 기사 평점
+   // 버스 기사 평점
 //    @GetMapping("/rate")
 //    public String searchRatingResult(@RequestParam String dId) {
 //
