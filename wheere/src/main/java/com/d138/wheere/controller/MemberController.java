@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
-
     private final MemberService memberService;
     private final ReservationService reservationService;
     private final DriverService driverService;
@@ -31,14 +30,14 @@ public class MemberController {
     public ResponseEntity signUpUser (@PathVariable("uId")String userId, @ModelAttribute MemberDTO memberDTO) {
 
         String name = memberDTO.getUName();
-        int age = memberDTO.getUAge();
+        LocalDate birthDate = memberDTO.getUBirthDate();
         String phoneNum = memberDTO.getUNum();
         String sex = memberDTO.getUSex();
 
         if (memberService.findMember(userId) != null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-        Member member = new Member(userId, name, age, phoneNum, sex);
+        Member member = new Member(userId, name, birthDate, phoneNum, sex);
         memberService.join(member);
 
         return new ResponseEntity(HttpStatus.OK);
@@ -52,7 +51,7 @@ public class MemberController {
 
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setUName(findMember.getName());
-        memberDTO.setUAge(findMember.getAge());
+        memberDTO.setUBirthDate(findMember.getBirthDate());
         memberDTO.setUNum(findMember.getPhoneNumber());
         memberDTO.setUSex(findMember.getSex());
 
@@ -115,7 +114,7 @@ public class MemberController {
 
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setUName(member.getUName());
-        memberDTO.setUAge(member.getUAge());
+        memberDTO.setUBirthDate(member.getUBirthDate());
         memberDTO.setUNum(member.getUNum());
         memberDTO.setUSex(member.getUSex());
 
