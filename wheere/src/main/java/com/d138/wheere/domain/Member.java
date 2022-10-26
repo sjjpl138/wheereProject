@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ public class Member {
     private String name;
 
     // 버스 요금 구분을 위한 나이
-    private int age;
+    private LocalDate birthDate;
 
     private String phoneNumber;
 

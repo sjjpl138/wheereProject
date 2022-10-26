@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,14 +20,10 @@ public class BusRepository {
         return bus.getId();
     }
 
-    // 에러 발생
     public Bus findOne(Long busId) {
-        /*return em.createQuery("select b from Bus b where b.id = :busId", Bus.class)
-                .setParameter("busId", busId)
-                .getSingleResult();*/
 
         return em.find(Bus.class, busId);
     }
 
-    // 버스 번호, 배차 순번를 이용해 버스 조회
+    // 버스 번호, 방향, 배차 순번를 이용해 버스 조회
 }
