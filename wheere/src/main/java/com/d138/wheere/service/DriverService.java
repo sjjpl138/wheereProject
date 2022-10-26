@@ -39,9 +39,9 @@ public class DriverService {
     }
 
     @Transactional
-    public void changeBus(String driverId, Long busId) {
+    public void changeBus(String driverId, Bus bus) {
         Driver findDriver = driverRepository.findOne(driverId);
-        Bus findBus = busRepository.findOne(busId);
+        Bus findBus = busRepository.findOne(bus.getId());
         findDriver.changeBus(findBus);
     }
 

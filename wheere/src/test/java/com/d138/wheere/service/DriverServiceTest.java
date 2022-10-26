@@ -95,7 +95,7 @@ public class DriverServiceTest {
         System.out.println("findDriver.getBus().getId() = " + findDriver.getBus().getId());
         assertThat(findDriver.getBus().getId()).isEqualTo(1L);
 
-        driverService.changeBus(driver.getId(), 2L);
+        driverService.changeBus(driver.getId(), bus2);
 
         System.out.println("findDriver.getBus().getId() = " + findDriver.getBus().getId());
         assertThat(findDriver.getBus().getId()).isEqualTo(2L);
