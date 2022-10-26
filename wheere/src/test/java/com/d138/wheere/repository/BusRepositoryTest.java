@@ -1,7 +1,6 @@
 package com.d138.wheere.repository;
 
 import com.d138.wheere.domain.*;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,7 +73,7 @@ public class BusRepositoryTest {
         em.flush();
         em.clear();
 
-        Bus findBus = busRepository.findBusForDriver("191", BusState.FORWARD, LocalTime.of(8, 0, 0));
+        Bus findBus = busRepository.findBus("191", BusState.FORWARD, LocalTime.of(8, 0, 0));
 
         Driver findDriver = driverRepository.findOne(driver.getId());
 
