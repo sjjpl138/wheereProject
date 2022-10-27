@@ -195,10 +195,10 @@ public class ReservationServiceTest {
 
         // When
         reservationService.saveReservation(memberId1, busId1, "구미역", "금오공대", LocalDate.now());
-        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDate.now());
-        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDate.now());
-        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDate.now());
-        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDate.now());
+        reservationService.saveReservation(memberId1, busId2, "구미역", "금오공대", LocalDate.now().plusDays(10));
+        reservationService.saveReservation(memberId1, busId3, "구미역", "금오공대", LocalDate.now().plusMonths(1));
+        reservationService.saveReservation(memberId1, busId4, "구미역", "금오공대", LocalDate.now().plusDays(8));
+        reservationService.saveReservation(memberId1, busId5, "구미역", "금오공대", LocalDate.now().plusDays(4));
 
         reservationService.saveReservation(memberId2, busId1, "구미역", "금오공대", LocalDate.now());
 
@@ -212,11 +212,11 @@ public class ReservationServiceTest {
         // 사용자에 대한 모든 예약 조회
         List<Reservation> reservationsByMember = reservationService.findReservationsByMember(memberId1);
 
-        assertThat(reservationsByMember.get(0).getBus().getBusNumber()).isEqualTo("1");
+        assertThat(reservationsByMember.get(0).getBus().getBusNumber()).isEqualTo("3");
         assertThat(reservationsByMember.get(1).getBus().getBusNumber()).isEqualTo("2");
-        assertThat(reservationsByMember.get(2).getBus().getBusNumber()).isEqualTo("3");
-        assertThat(reservationsByMember.get(3).getBus().getBusNumber()).isEqualTo("4");
-        assertThat(reservationsByMember.get(4).getBus().getBusNumber()).isEqualTo("5");
+        assertThat(reservationsByMember.get(2).getBus().getBusNumber()).isEqualTo("4");
+        assertThat(reservationsByMember.get(3).getBus().getBusNumber()).isEqualTo("5");
+        assertThat(reservationsByMember.get(4).getBus().getBusNumber()).isEqualTo("1");
 
         // 버스에 대한 모든 예약 조회
         List<Reservation> reservationsByBus = reservationService.findReservationsByBus(busId1);
