@@ -113,11 +113,13 @@ public class DriverController {
         cancelResult.setBId(resv.getBus().getId());
         cancelResult.setRId(rId);
 
-        if (resv.canCancel()) {
+        try {
             reservationService.cancelReservation(rId);
+
             return new ResponseEntity(cancelResult, HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     //버스 시간표 조회
