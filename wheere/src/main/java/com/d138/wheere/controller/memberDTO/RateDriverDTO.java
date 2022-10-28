@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RateDriverDTO {
-    private String uId;
-    private String dId;
+    private Long rId;
     private Long rate;
 }

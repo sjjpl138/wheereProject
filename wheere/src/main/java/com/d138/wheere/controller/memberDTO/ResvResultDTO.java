@@ -17,10 +17,9 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class ResvResultDTO {
-    private String  uid;
-    private Long rid;
+    private String  uId;
+    private Long rId;
     @JsonFormat(shape = JsonFormat.Shape.STRING,  pattern = "yyyy-MM-dd")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate rTime;
 
     private String rStart;
