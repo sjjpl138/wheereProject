@@ -45,7 +45,7 @@ public class DriverController {
 
         Driver findDriver = driverService.findDriver(driverId);
         if (findDriver != null)
-            return  new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return  new ResponseEntity("이미 존재하는 회원입니다.", HttpStatus.BAD_REQUEST);
         driverService.join(driver);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -118,7 +118,7 @@ public class DriverController {
 
             return new ResponseEntity(cancelResult, HttpStatus.OK);
         } catch (IllegalStateException e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -141,8 +141,11 @@ public class DriverController {
         LocalTime bStartTime = assignBusDTO.getBStartTime();
         Bus bus = busService.selectBus(bNumber, bDir, bStartTime);
 
-        driverService.changeBus(driverId, bus);
+        Driver driverByBus = driverService.findDriverByBus(bus.getId());
+        if (driverByBus != null)
+            return new ResponseEntity("이미 버스 기사가 배정된 버스입니다.", HttpStatus.BAD_REQUEST);
 
+        driverService.changeBus(driverId, bus);
         return new ResponseEntity(HttpStatus.OK);
     }
 
