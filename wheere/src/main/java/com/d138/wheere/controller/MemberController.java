@@ -42,12 +42,12 @@ public class MemberController {
         String sex = memberDTO.getUSex();
 
         if (memberService.findMember(userId) != null)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("이미 존재하는 회원입니다.", HttpStatus.BAD_REQUEST);
 
         Member member = new Member(userId, name, birthDate, phoneNum, sex);
         memberService.join(member);
 
-            return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     //사용자 로그인
@@ -94,9 +94,9 @@ public class MemberController {
 
             return new ResponseEntity(rIdJsonResult, HttpStatus.OK);
         } catch (IllegalStateException e)  {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NotEnoughSeatsException e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -119,7 +119,7 @@ public class MemberController {
         return resultArray;
     }
 
-    //예약 취소
+    //예약 거절
     @PostMapping("/resv/{uId}")
     public ResponseEntity cancelResv(@PathVariable("uId") String userId,  Long rId) {
 
@@ -131,7 +131,7 @@ public class MemberController {
             reservationService.cancelReservation(rId);
             return new ResponseEntity(cancelResult, HttpStatus.OK);
         } catch (IllegalStateException e)  {
-            return new ResponseEntity(cancelResult, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -172,6 +172,4 @@ public class MemberController {
 
         return new ResponseEntity(scheduleResult, HttpStatus.OK);
     }
-
-
 }
