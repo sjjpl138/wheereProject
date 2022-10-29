@@ -93,7 +93,7 @@ public class DriverController {
         return new ResponseEntity(jsonResult, HttpStatus.OK);
     }
 
-//    버스 기사 평점 조회
+    //    버스 기사 평점 조회
     @GetMapping("/rate")
     public String searchRatingResult(@RequestParam String driverId) {
 
@@ -148,5 +148,4 @@ public class DriverController {
         driverService.changeBus(driverId, bus);
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }
