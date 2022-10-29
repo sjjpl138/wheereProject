@@ -148,5 +148,4 @@ public class DriverController {
         driverService.changeBus(driverId, bus);
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }

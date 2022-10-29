@@ -133,7 +133,6 @@ public class MemberController {
         } catch (IllegalStateException e)  {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-
     }
 
     //사용자 정보 수정
