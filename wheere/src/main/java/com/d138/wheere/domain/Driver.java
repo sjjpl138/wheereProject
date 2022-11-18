@@ -15,10 +15,6 @@ public class Driver {
     @Column(name = "DRIVER_ID")
     private String id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "BUS_ID")
-    private Bus bus;
-
     private String name;
 
     private double ratingScore;
@@ -28,9 +24,9 @@ public class Driver {
     /* 비지니스 로직 */
 
     // 버스 변경
-    public void changeBus(Bus bus) {
+    /*public void changeBus(Bus bus) {
         this.bus = bus;
-    }
+    }*/
 
     // 평점 계산
     public void calculateRatings(double score) {
