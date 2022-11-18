@@ -45,7 +45,7 @@ public class Bus {
     // 전체 교통 약자 좌석 수
     private int totalWheelChairSeats;
 
-    // 좌석 -> 버스에는 굳이 없어도 될 듯??
-    /*@OneToMany(mappedBy = "bus")
-    private List<Seat> seats = new ArrayList<>();*/
+    // 좌석
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Seat> seats = new ArrayList<>();
 }
