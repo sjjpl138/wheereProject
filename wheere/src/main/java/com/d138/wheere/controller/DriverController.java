@@ -9,7 +9,7 @@ import com.d138.wheere.domain.Bus;
 import com.d138.wheere.domain.BusState;
 import com.d138.wheere.domain.Driver;
 import com.d138.wheere.domain.Reservation;
-import com.d138.wheere.repository.BusNumDirDTO;
+import com.d138.wheere.repository.bus.query.BusNumDirDTO;
 import com.d138.wheere.service.BusService;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.ReservationService;

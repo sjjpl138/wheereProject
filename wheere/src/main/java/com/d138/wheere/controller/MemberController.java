@@ -5,7 +5,7 @@ import com.d138.wheere.domain.Driver;
 import com.d138.wheere.domain.Member;
 import com.d138.wheere.domain.Reservation;
 import com.d138.wheere.exception.NotEnoughSeatsException;
-import com.d138.wheere.repository.BusNumDirDTO;
+import com.d138.wheere.repository.bus.query.BusNumDirDTO;
 import com.d138.wheere.service.BusService;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.MemberService;
