@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -26,8 +27,12 @@ public class Route {
     @JoinColumn(name = "STATION_ID")
     private Station station;
 
+    // 정류장 순서
     private int stationSeq;
 
-    // TODO (버스 도착 시간 필드 추가하기)
+    // 예상 도착 시간 (from 이전 정류장)
+    private LocalTime arrivalTime;
 
+    // 예약 가능한 남은 좌석 수
+    private int leftSeatsNum;
 }
