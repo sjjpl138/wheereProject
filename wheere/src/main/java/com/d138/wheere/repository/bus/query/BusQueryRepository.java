@@ -14,7 +14,10 @@ public class BusQueryRepository {
 
     // 버스 번호, 방향만 조회하는 메서드
     public List<BusNumDirDTO> findBusNumDir() {
-        return em.createQuery("select new com.d138.wheere.repository.bus.query.BusNumDirDTO(b.busNumber, b.direction) from Bus b where b.busAllocationSeq = 1 order by (b.busNumber, b.direction)", BusNumDirDTO.class)
+        return em.createQuery("select new com.d138.wheere.repository.bus.query.BusNumDirDTO(b.busNumber, b.direction)"
+                + " from Bus b"
+                + " where b.busAllocationSeq = 1"
+                + " order by (b.busNumber, b.direction)", BusNumDirDTO.class)
                 .getResultList();
     }
 }
