@@ -16,7 +16,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Bus {
 
@@ -25,7 +24,7 @@ public class Bus {
     private Long id;
 
     // 버스 경로
-    @OneToMany(mappedBy = "bus")
+    @OneToMany(mappedBy = "bus", cascade = CascadeType.REMOVE)
     private List<Route> routes = new ArrayList<>();
 
     // 버스 배차 순번
@@ -41,4 +40,12 @@ public class Bus {
     // 버스 출발 시간
     @DateTimeFormat(pattern = "hh:mm:ss")
     private LocalTime departureTime;
+
+    public Bus(Long id, int busAllocationSeq, BusState direction, String busNumber, LocalTime departureTime) {
+        this.id = id;
+        this.busAllocationSeq = busAllocationSeq;
+        this.direction = direction;
+        this.busNumber = busNumber;
+        this.departureTime = departureTime;
+    }
 }
