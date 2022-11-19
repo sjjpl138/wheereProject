@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,11 +25,6 @@ public class ReservationRepository {
         return em.find(Reservation.class, id);
     }
 
-    public List<Reservation> findAll() {
-        return em.createQuery("select r from Reservation r", Reservation.class)
-                .getResultList();
-    }
-
     // MemberId로 예약 조회하기
     public List<Reservation> findByMember(String memberId) {
         return em.createQuery("select r from Reservation r join r.member m on m.id = :memberId ORDER BY r.reservationDate DESC", Reservation.class)
@@ -41,13 +37,24 @@ public class ReservationRepository {
     }
 
     // 특정 버스, 특정 날짜에 대한 예약 검색
-    public List<Reservation> findByBusAndDate(Long busId, LocalDate date) {
-        return em.createQuery("select r from Reservation r join r.bus b on b.id = :busId where r.reservationDate = :date", Reservation.class)
+    // TODO (정류소 순번별로 정렬해야 함)
+    public List<Reservation> findByBusAndDate(Long busId, LocalDate reservationDate) {
+        return em.createQuery("select r from Reservation r"
+                                + " join r.bus b on b.id = :busId"
+                                + " where r.reservationDate = :date"
+                        , Reservation.class)
                 .setParameter("busId", busId)
-                .setParameter("date", date)
+                .setParameter("date", reservationDate)
                 .getResultList();
     }
 
+    /**
+     * 사용자가 같은 버스를 동일한 날짜에 예약한적이 있는지 검증
+     * @param memberId
+     * @param busId
+     * @param reservationDate
+     * @return 특정 날짜 특정 버스에 대한 사용자의 예약 기록
+     */
     public List<Reservation> checkScheduleDuplication(String memberId, Long busId, LocalDate reservationDate) {
 
         return em.createQuery("select r from Reservation r join r.bus b join r.member m on b.id = :busId and m.id = :memberId where r.reservationDate = :reservationDate", Reservation.class)
