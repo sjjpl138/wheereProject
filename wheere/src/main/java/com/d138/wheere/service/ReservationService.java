@@ -4,6 +4,7 @@ import com.d138.wheere.domain.*;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.MemberRepository;
 import com.d138.wheere.repository.ReservationRepository;
+import com.d138.wheere.repository.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,67 +22,72 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final BusRepository busRepository;
 
+    private final RouteRepository routeRepository;
+
     /**
      * 예약 생성
      * 사용자가 예약 UI 화면에서 정보 입력 후 예약하기 클릭 시 호출됨
      * @param memberId
      * @param busId
-     * @param startPoint
-     * @param endPoint
+     * @param startSeq
+     * @param endSeq
      * @param reservationDate
-     * @return 예약ID (PK)
+     * @return
      */
     @Transactional
-    public Long saveReservation(String memberId, Long busId, String startPoint, String endPoint
-            , LocalDate reservationDate) {
+    public Long saveReservation(String memberId, Long busId, int startSeq, int endSeq, LocalDate reservationDate) {
 
         // 엔티티 조회
         Member member = memberRepository.findOne(memberId);
-        Bus bus = busRepository.findOne(busId); // 여기 버스가 버스 테이블의 버스가 아닌 예약에 참조된 버스여야 할듯??
+        Bus bus = busRepository.findOne(busId);
 
-         /* 버스 제약사항 추가 */
+        // 출발 정류장, 도착 정류장 순번
+        List<Route> findRoutes = routeRepository.findRoutesBySeq(busId, startSeq, endSeq);
+
+        Route startRoute = findRoutes.get(0);
+        Route endRoute = findRoutes.get(findRoutes.size() - 1);
+
+        /* 버스 제약사항 추가 */
 
         // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
         // TODO (버스 출발 시간이 아닌 예상 도착 시간으로 비교하기)
-        if (compareBusDepartureTime(bus, reservationDate)) {
-            throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
-        }
-
-        // 예약하려는 날짜에 사용자의 예약하려는 버스에 대한 예약들을 불러온다.
-        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
+        compareBusDepartureTime(startRoute, reservationDate);
 
         // 동일 버스에 대한 기존 예약이 존재하고 기존 예약의 상태가 취소 상태가 아니라면 예약 불가
+        validateDuplicateReservation(reservationDate, member, bus);
+
+        // 예약 생성
+        String startPoint = startRoute.getStation().getName();
+        String endPoint = endRoute.getStation().getName();
+        Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
+
+        // 해당 버스 정류장별로 좌석 감소 (마지막 정류장 제외)
+        subRouteSeats(findRoutes);
+
+        reservationRepository.save(reservation);
+        return reservation.getId();
+    }
+
+    private void subRouteSeats(List<Route> findRoutes) {
+        for (int i = 0; i < findRoutes.size() - 1; i++) {
+            findRoutes.get(i).subSeats();
+        }
+    }
+
+    private void validateDuplicateReservation(LocalDate reservationDate, Member member, Bus bus) {
+        // 예약하려는 날짜에 사용자의 예약하려는 버스에 대한 예약들을 불러온다.
+        List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
         if (!reservations.isEmpty()) {
             for (Reservation reservation : reservations) {
                 if(reservation.getReservationState() != ReservationState.CANCEL)
                     throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
             }
         }
-
-        // 예약 생성
-        Reservation reservation = Reservation.createReservation(member, bus, startPoint, endPoint, reservationDate);
-        // 해당 버스 좌석 감소
-        // 예약하려는 날짜, 버스에 대한 Seat이 만들어져 있지 않으면 생성??
-        // 날짜와 버스Id로 Seat 조회하는 메서드 작성해야 할 듯
-        /*List<Seat> findSeat = seatRepository.findByBusAndDate(busId, reservationDate);
-        if (findSeat.isEmpty()) {
-            Seat seat = Seat.createSeat(bus, reservationDate, bus.getTotalWheelChairSeats());
-            seat.subSeats();
-            seatRepository.save(seat);
-        } else {
-            findSeat.get(0).subSeats();
-        }*/
-
-        reservationRepository.save(reservation);
-        return reservation.getId();
     }
 
-    private boolean compareBusDepartureTime(Bus bus, LocalDate reservationDate) {
-        if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isAfter(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
-            return true;
-        }
-
-        else return false;
+    private void compareBusDepartureTime(Route route, LocalDate reservationDate) {
+        if ((LocalTime.now().isAfter(route.getArrivalTime())&& (!LocalDate.now().isAfter(reservationDate))) || (LocalDate.now().isAfter(reservationDate)))
+            throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
     }
 
     /**
