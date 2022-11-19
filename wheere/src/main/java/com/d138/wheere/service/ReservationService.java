@@ -25,7 +25,14 @@ public class ReservationService {
     private final SeatRepository seatRepository;
 
     /**
-     * 예약
+     * 예약 생성
+     * 사용자가 예약 UI 화면에서 정보 입력 후 예약하기 클릭 시 호출됨
+     * @param memberId
+     * @param busId
+     * @param startPoint
+     * @param endPoint
+     * @param reservationDate
+     * @return 예약ID (PK)
      */
     @Transactional
     public Long saveReservation(String memberId, Long busId, String startPoint, String endPoint
@@ -38,6 +45,7 @@ public class ReservationService {
          /* 버스 제약사항 추가 */
 
         // 예약하려는 버스 출발 시간이 현재 시간 이전이라면 예약 불가
+        // TODO (버스 출발 시간이 아닌 예상 도착 시간으로 비교하기)
         if (compareBusDepartureTime(bus, reservationDate)) {
             throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
         }
@@ -71,7 +79,7 @@ public class ReservationService {
         return reservation.getId();
     }
 
-    public boolean compareBusDepartureTime(Bus bus, LocalDate reservationDate) {
+    private boolean compareBusDepartureTime(Bus bus, LocalDate reservationDate) {
         if ((LocalTime.now().isAfter(bus.getDepartureTime())) && (LocalDate.now().isAfter(reservationDate) || LocalDate.now().isEqual(reservationDate))) {
             return true;
         }
@@ -82,6 +90,7 @@ public class ReservationService {
     /**
      * 예약 취소
      */
+    // TODO [예약 상태 변경 (취소, CANCEL) 구현해야 함]
     @Transactional
     public void cancelReservation(Long reservationId) {
         // 예약 엔티티 조회
@@ -94,17 +103,18 @@ public class ReservationService {
     }
 
     // 예약 거절
+    // TODO [예약 상태 변경 (거절, REFUSED) 구현해야 함]
     @Transactional
     public void rejectReservation(Long reservationId) {
         Reservation findReservation = reservationRepository.findOne(reservationId);
     }
 
+    // TODO [예약 상태 변경 (예약됨, RESERVED) 구현해야 함]
+
+    // TODO [예약 상태 변경 (운행 완료, COMP) 구현해야 함]
+
     public Reservation findReservation(Long reservationId) {
         return reservationRepository.findOne(reservationId);
-    }
-
-    public List<Reservation> findAll() {
-        return reservationRepository.findAll();
     }
 
     // 특정 사용자에 대한 모든 예약 정보 조회
@@ -118,7 +128,14 @@ public class ReservationService {
     }
 
     // 특정 버스, 특정 날짜에 대한 예약 검색
-    public List<Reservation> checkScheduleByBus(Long busId, LocalDate date) {
-        return reservationRepository.findByBusAndDate(busId, date);
+
+    /**
+     * 버스 기사가 자신이 운행하는 버스에 대한 예약 조회
+     * @param busId
+     * @param reservationDate
+     * @return
+     */
+    public List<Reservation> checkScheduleByBus(Long busId, LocalDate reservationDate) {
+        return reservationRepository.findByBusAndDate(busId, reservationDate);
     }
 }
