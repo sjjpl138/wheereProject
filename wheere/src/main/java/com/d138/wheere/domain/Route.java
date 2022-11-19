@@ -28,4 +28,6 @@ public class Route {
 
     private int stationSeq;
 
+    // TODO (버스 도착 시간 필드 추가하기)
+
 }
