@@ -1,6 +1,8 @@
 package com.d138.wheere.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Driver {
 
     @Id
@@ -23,20 +27,11 @@ public class Driver {
 
     /* 비지니스 로직 */
 
-    // 버스 변경
-    /*public void changeBus(Bus bus) {
-        this.bus = bus;
-    }*/
-
     // 평점 계산
     public void calculateRatings(double score) {
 
-        double sum = ratingCnt * ratingScore;
+        double sum = ratingCnt * ratingScore + score;
 
-        sum += score;
-
-        ratingCnt++;
-
-        ratingScore = sum / ratingCnt;
+        ratingScore = sum / (ratingCnt + 1);
     }
 }
