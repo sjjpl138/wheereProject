@@ -44,8 +44,4 @@ public class Bus {
 
     // 전체 교통 약자 좌석 수
     private int totalWheelChairSeats;
-
-    // 좌석
-    @OneToMany(mappedBy = "bus", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<Seat> seats = new ArrayList<>();
 }
