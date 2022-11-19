@@ -41,7 +41,4 @@ public class Bus {
     // 버스 출발 시간
     @DateTimeFormat(pattern = "hh:mm:ss")
     private LocalTime departureTime;
-
-    // 전체 교통 약자 좌석 수
-    private int totalWheelChairSeats;
 }
