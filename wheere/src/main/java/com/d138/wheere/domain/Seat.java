@@ -34,13 +34,22 @@ public class Seat {
     private int leftWheelChairSeats;
 
     public Seat(Bus bus, LocalDate operationDate, int totalWheelChairSeats) {
-        this.bus = bus;
+        setBus(bus);
         this.operationDate = operationDate;
         this.totalWheelChairSeats = totalWheelChairSeats;
         this.leftWheelChairSeats = totalWheelChairSeats;
     }
 
     /* 생성 메서드 */
+
+    /**
+     * 버스에 대한 좌석을 생성하는 메서드
+     *
+     * @param bus
+     * @param operationDate
+     * @param totalWheelChairSeats
+     * @return
+     */
     public static Seat createSeat(Bus bus, LocalDate operationDate, int totalWheelChairSeats) {
         return new Seat(bus, operationDate, totalWheelChairSeats);
     }
@@ -59,5 +68,14 @@ public class Seat {
             throw new NotEnoughSeatsException("남은 좌석이 없습니다.");
         }
         this.leftWheelChairSeats = restSeats;
+    }
+
+    /* 연관관계 편의 메서드 */
+    private void setBus(Bus bus) {
+        if (this.bus != null) {
+            this.bus.getSeats().remove(this);
+        }
+        this.bus = bus;
+        bus.getSeats().add(this);
     }
 }
