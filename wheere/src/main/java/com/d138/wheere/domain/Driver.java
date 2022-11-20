@@ -31,7 +31,7 @@ public class Driver {
     public void calculateRatings(double score) {
 
         double sum = ratingCnt * ratingScore + score;
-
-        ratingScore = sum / (ratingCnt + 1);
+        this.ratingCnt++;
+        this.ratingScore = sum / ratingCnt;
     }
 }
