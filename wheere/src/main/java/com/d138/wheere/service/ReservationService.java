@@ -175,7 +175,21 @@ public class ReservationService {
         }
     }
 
-    // TODO [예약 상태 변경 (예약됨, RESERVED) 구현해야 함]
+    @Transactional
+    public void permitReservation(Long reservationId) {
+        // 예약 엔티티 조회
+        Reservation findReservation = reservationRepository.findOne(reservationId);
+
+        findReservation.permit();
+    }
+
+    @Transactional
+    public void completeReservation(Long reservationId) {
+        // 예약 엔티티 조회
+        Reservation findReservation = reservationRepository.findOne(reservationId);
+
+        findReservation.complete();
+    }
 
     // TODO [예약 상태 변경 (운행 완료, COMP) 구현해야 함]
 

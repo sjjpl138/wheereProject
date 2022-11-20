@@ -67,13 +67,30 @@ public class Reservation {
         this.reservationState = reservationState;
     }
 
+    public void complete() {
+        canComplete();
+
+        changeReservationState(ReservationState.COMP);
+    }
+
+    private void canComplete() {
+        if(!this.reservationState.equals(ReservationState.RESERVED))
+            throw new IllegalStateException("운행 완료할 수 없습니다.");
+    }
+
+    public void permit() {
+        canPermitOrReject();
+
+        changeReservationState(ReservationState.RESERVED);
+    }
+
     public void reject() {
-        canReject();
+        canPermitOrReject();
         
         changeReservationState(ReservationState.REFUSED);
     }
 
-    private void canReject() {
+    private void canPermitOrReject() {
         if(!this.reservationState.equals(ReservationState.WAITING))
             throw new IllegalStateException("예약 거절이 불가능한 상태입니다.");
     }
