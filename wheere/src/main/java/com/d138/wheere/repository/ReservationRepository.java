@@ -27,8 +27,12 @@ public class ReservationRepository {
 
     // MemberId로 예약 조회하기
     public List<Reservation> findByMember(String memberId) {
-        return em.createQuery("select r from Reservation r join r.member m on m.id = :memberId ORDER BY r.reservationDate DESC", Reservation.class)
-                .setParameter("memberId", memberId).getResultList();
+        return em.createQuery("select r from Reservation r" +
+                        " join r.member m on m.id = :memberId" +
+                        " join fetch r.bus" +
+                        " ORDER BY r.reservationDate DESC", Reservation.class)
+                .setParameter("memberId", memberId)
+                .getResultList();
     }
 
     public List<Reservation> findByBus(Long busId) {
