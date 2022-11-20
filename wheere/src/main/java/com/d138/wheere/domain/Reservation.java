@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Reservation {
+public class Reservation extends BaseEntity{
 
     // TODO (BaseEntity 추가하기)
 
@@ -39,11 +39,10 @@ public class Reservation {
     /* 생성자 */
     public Reservation() {
     }
-
-    public Reservation(Member member, Bus bus,
-                       String startPoint, String endPoint,
-                       LocalDate reservationDate,
-                       ReservationState reservationState) {
+    
+    public Reservation(LocalDateTime createDate, LocalDateTime lastModifiedDate, Member member, Bus bus
+            , String startPoint, String endPoint, LocalDate reservationDate, ReservationState reservationState) {
+        super(createDate, lastModifiedDate);
         this.member = member;
         this.bus = bus;
         this.startPoint = startPoint;
@@ -56,7 +55,8 @@ public class Reservation {
     public static Reservation createReservation(Member member, Bus bus,
                                                 String startPoint, String endPoint,
                                                 LocalDate reservationDate) {
-        Reservation reservation = new Reservation(member, bus, startPoint, endPoint,
+        LocalDateTime now = LocalDateTime.now();
+        Reservation reservation = new Reservation(now, now, member, bus, startPoint, endPoint,
                 reservationDate, ReservationState.WAITING);
 
         return reservation;
@@ -70,6 +70,9 @@ public class Reservation {
     public void complete() {
         canComplete();
 
+        LocalDateTime now = LocalDateTime.now();
+        this.setLastModifiedDate(now);
+
         changeReservationState(ReservationState.COMP);
     }
 
@@ -81,11 +84,17 @@ public class Reservation {
     public void permit() {
         canPermitOrReject();
 
+        LocalDateTime now = LocalDateTime.now();
+        this.setLastModifiedDate(now);
+
         changeReservationState(ReservationState.RESERVED);
     }
 
     public void reject() {
         canPermitOrReject();
+
+        LocalDateTime now = LocalDateTime.now();
+        this.setLastModifiedDate(now);
         
         changeReservationState(ReservationState.REFUSED);
     }
@@ -97,6 +106,9 @@ public class Reservation {
 
     public void cancel(){
         canCancel();
+
+        LocalDateTime now = LocalDateTime.now();
+        this.setLastModifiedDate(now);
 
         changeReservationState(ReservationState.CANCEL);
     }
