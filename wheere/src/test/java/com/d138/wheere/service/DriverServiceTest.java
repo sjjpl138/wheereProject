@@ -1,9 +1,7 @@
 package com.d138.wheere.service;
 
-import com.d138.wheere.domain.Bus;
-import com.d138.wheere.domain.BusState;
-import com.d138.wheere.domain.Driver;
-import com.d138.wheere.domain.Member;
+import com.d138.wheere.domain.*;
+import com.d138.wheere.repository.BusDriverRepository;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.DriverRepository;
 import org.junit.jupiter.api.Test;
@@ -35,156 +33,77 @@ public class DriverServiceTest {
     @Autowired
     BusRepository busRepository;
 
+    @Autowired
+    private BusDriverRepository busDriverRepository;
+
     private Long mId = 0L;
     private Long bId = 0L;
 
     @Test
-    public void 가입_조회() {
+    public void 버스_배정_테스트() {
 
         // Given
-        Driver driver = new Driver();
-        driver.setId("1L");
-        driver.setRatingScore(0);
-        driver.setBus(null);
-        driver.setRatingCnt(0);
-        driver.setName("정영한");
-
-        // When
-        driverService.join(driver);
-
-        em.flush();
-        em.clear();
-
-        // Then
-        Driver findDriver = driverService.findDriver(driver.getId());
-
-        assertThat(findDriver.getId()).isEqualTo("1L");
-        assertThat(findDriver.getName()).isEqualTo("정영한");
-        assertThat(findDriver.getRatingCnt()).isEqualTo(0);
-        assertThat(findDriver.getRatingScore()).isEqualTo(0);
-        assertThat(findDriver).isInstanceOf(Driver.class);
-    }
-    
-    @Test
-    public void 버스변경() {
-        
-        // Given
-        Bus bus1 = new Bus();
-        bus1.setId(1L);
-
-        Bus bus2 = new Bus();
-        bus2.setId(2L);
-
-        Driver driver = new Driver();
-        driver.setId("1L");
-        driver.setRatingScore(0);
-        driver.setBus(bus1);
-        driver.setRatingCnt(0);
-        driver.setName("정영한");
-
-        // When
-        em.persist(bus1);
-        em.persist(bus2);
-        driverService.join(driver);
-
-        em.flush();
-        em.clear();
-
-        // Then
-        Driver findDriver = driverService.findDriver(driver.getId());
-        System.out.println("findDriver.getBus().getId() = " + findDriver.getBus().getId());
-        assertThat(findDriver.getBus().getId()).isEqualTo(1L);
-
-        driverService.changeBus(driver.getId(), bus2);
-
-        System.out.println("findDriver.getBus().getId() = " + findDriver.getBus().getId());
-        assertThat(findDriver.getBus().getId()).isEqualTo(2L);
-        assertThat(findDriver.getBus()).isInstanceOf(Bus.class);
-    }
-
-    @Test
-    public void findDriverByBusTest() {
-
-        // Given
-        Bus bus1 = new Bus();
-        bus1.setId(1L);
-        em.persist(bus1);
-
-        Driver driver = new Driver();
-        driver.setId("1L");
-        driver.setRatingScore(0);
-        driver.setBus(bus1);
-        driver.setRatingCnt(0);
-        driver.setName("정영한");
+        Driver driver = new Driver("1L", "홍길동", 0, 0);
         em.persist(driver);
+        Long busId = createBus("191-5");
+        Bus findBus = busRepository.findOne(busId);
 
-        //  When
-        Driver findDriver = driverService.findDriverByBus(bus1.getId());
+        String busNumber = findBus.getBusNumber();
+        BusState direction = findBus.getDirection();
+        LocalTime departureTime = findBus.getDepartureTime();
 
-        // Then
-        assertThat(findDriver.getId()).isEqualTo("1L");
-        assertThat(findDriver.getName()).isEqualTo("정영한");
-    }
-
-    @Test
-    public void 평점_반영() {
-
-        // Given
-        Bus bus1 = new Bus();
-        bus1.setId(1L);
-        em.persist(bus1);
-
-        Driver driver = new Driver();
-        driver.setId("1L");
-        driver.setRatingScore(0);
-        driver.setBus(bus1);
-        driver.setRatingCnt(0);
-        driver.setName("정영한");
-        em.persist(driver);
+        LocalDate date = LocalDate.of(2022, 1, 1);
 
         // When
-        driverService.reflectScores(1L, 4.0);
-        driverService.reflectScores(1L, 5.0);
-        driverService.reflectScores(1L, 3.0);
+        Long busDriverId = driverService.selectBus(date, busNumber, direction, departureTime, driver.getId());
 
         em.flush();
         em.clear();
 
-        Driver findDriver = driverService.findDriver(driver.getId());
-
         // Then
-        assertThat(findDriver.getRatingScore()).isEqualTo(4.0);
+        BusDriver findBusDriver = busDriverRepository.findBusDriverWithDriver(findBus.getId(), date);
 
+        assertThat(findBusDriver.getDriver().getName()).isEqualTo("홍길동");
     }
 
     @Test
-    public void 평점_확인() {
+    public void 평점_반영_테스트() {
 
         // Given
-        String memberId1 = createMember("정영한");
-        Long busId1 = createBus("191-5");
+        Driver driver = new Driver("1L", "홍길동", 0, 0);
+        em.persist(driver);
+        Long busId = createBus("191-5");
+        Bus findBus = busRepository.findOne(busId);
+
+        String busNumber = findBus.getBusNumber();
+        BusState direction = findBus.getDirection();
+        LocalTime departureTime = findBus.getDepartureTime();
+
+        LocalDate date = LocalDate.of(2022, 1, 1);
+
+        Long busDriverId = driverService.selectBus(date, busNumber, direction, departureTime, driver.getId());
 
         em.flush();
         em.clear();
 
-        Bus findBus = busRepository.findOne(busId1);
-
-        Driver driver = new Driver();
-        driver.setId("driver1");
-        driver.setName("홍길동");
-        driver.setBus(findBus);
-        driver.setRatingCnt(0);
-        driver.setRatingScore(0);
-        em.persist(driver);
-
         // When
-        driverService.reflectScores(busId1, 4.0);
+        double score1 = driverService.reflectScores(busId, date, 4.0);
+        double score2 = driverService.reflectScores(busId, date, 3.9);
+        double score3 = driverService.reflectScores(busId, date, 5.0);
+
+        em.flush();
+        em.clear();
 
         // Then
-        double rating = driverService.checkRating(driver.getId());
+        assertThat(score1).isEqualTo(4.0);
+        assertThat(score3).isEqualTo(4.3);
 
-        assertThat(rating).isEqualTo(4.0);
+        Driver findDriver = driverRepository.findOne(driver.getId());
+        assertThat(findDriver.getRatingScore()).isEqualTo(4.3);
+        assertThat(findDriver.getRatingCnt()).isEqualTo(3);
 
+        double driverScore = driverService.checkRating(driver.getId());
+        assertThat(driverScore).isEqualTo(4.3);
     }
 
     private String createMember(String name) {
@@ -203,7 +122,6 @@ public class DriverServiceTest {
         Bus bus = new Bus();
         bus.setId(bId++);
         bus.setBusNumber(busNum);
-        bus.setTotalWheelChairSeats(2);
         bus.setDirection(BusState.FORWARD);
         bus.setBusAllocationSeq(1);
         bus.setDepartureTime(LocalTime.now().plusMinutes(10));
