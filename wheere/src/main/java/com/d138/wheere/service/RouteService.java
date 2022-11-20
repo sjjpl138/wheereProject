@@ -16,7 +16,12 @@ public class RouteService {
 
     private final RouteRepository routeRepository;
 
-    // 버스 번호와 버스 방향으로 버스 노선 조회
+    /**
+     * 버스 번호와 버스 방향으로 버스 노선 조회
+     * @param busNum
+     * @param busState
+     * @return
+     */
     private List<Route> findBusRouteByBusInfo(String busNum, BusState busState) {
         return routeRepository.findBusRouteByBusInfo(busNum, busState);
     }
