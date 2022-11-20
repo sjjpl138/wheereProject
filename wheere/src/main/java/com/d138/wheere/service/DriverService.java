@@ -61,11 +61,6 @@ public class DriverService {
         return findDriver.getRatingScore();
     }
 
-    // 사용자 예약 상태가 COMP 인지 검사
-    private void isReservationStateCOMP() {
-
-    }
-
     /**
      * 버스 기사 버스 배정
      * 예외처리 필요
@@ -118,7 +113,7 @@ public class DriverService {
      * @param driverId
      * @return
      */
-    public Driver findDriver(String driverId) {
+    public Driver findOne(String driverId) {
         return driverRepository.findOne(driverId);
     }
 
