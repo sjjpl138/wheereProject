@@ -23,7 +23,7 @@ public class RouteService {
      * @param busState
      * @return
      */
-    private List<Route> findBusRouteByBusInfo(String busNum, BusState busState) {
+    public List<Route> findBusRouteByBusInfo(String busNum, BusState busState) {
         return routeRepository.findBusRouteByBusInfo(busNum, busState);
     }
 

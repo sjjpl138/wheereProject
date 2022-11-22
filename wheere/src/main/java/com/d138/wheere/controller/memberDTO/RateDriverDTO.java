@@ -1,11 +1,8 @@
 package com.d138.wheere.controller.memberDTO;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+import lombok.Data;
+@Data
 public class RateDriverDTO {
     private Long rId;
-    private Long rate;
+    private Double rate;
 }
