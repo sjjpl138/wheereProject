@@ -1,5 +1,6 @@
 package com.d138.wheere.repository;
 
+import com.d138.wheere.domain.BusState;
 import com.d138.wheere.domain.Seat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -36,5 +37,19 @@ public class SeatRepository {
                 .setParameter("seqList", seqList)
                 .setParameter("date", reservationDate)
                 .getResultList();
+    }
+
+    // TODO (어..)
+    public int inquiryMinLeftSeatNum(String busNum, BusState busState, LocalDate reservationDate, List<Integer> seqList) {
+        return em.createQuery("select min(s.leftSeatsNum)" +
+                        " from Seat s" +
+                        " join s.route r on r.stationSeq in :seqList" +
+                        " join r.bus b on b.busNumber = :busNum and b.direction = :busState" +
+                        " where s.reservationDate = :reservationDate", Integer.class)
+                .setParameter("busNum", busNum)
+                .setParameter("busState", busState)
+                .setParameter("seqList", seqList)
+                .setParameter("reservationDate", reservationDate)
+                .getSingleResult();
     }
 }

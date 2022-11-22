@@ -82,4 +82,16 @@ public class RouteRepository {
                 .setParameter("pointList", pointList)
                 .getResultList();
     }
+
+    // TODO (어..)
+    public List<Object[]> inquiryBusSchedule(String busNum, BusState direction, List<Integer> seqList) {
+        return em.createQuery("select b.id, r.arrivalTime" +
+                        " from Route r" +
+                        " join r.bus b on b.busNumber = :busNum and b.direction = :direction" +
+                        " where r.stationSeq in :seqList", Object[].class)
+                .setParameter("busNum", busNum)
+                .setParameter("direction", direction)
+                .setParameter("seqList", seqList)
+                .getResultList();
+    }
 }
