@@ -4,5 +4,5 @@ import lombok.Data;
 @Data
 public class RateDriverDTO {
     private Long rId;
-    private Long rate;
+    private Double rate;
 }

@@ -1,18 +1,14 @@
 package com.d138.wheere.controller;
 
 import com.d138.wheere.controller.memberDTO.*;
-import com.d138.wheere.domain.Driver;
-import com.d138.wheere.domain.Member;
-import com.d138.wheere.domain.Reservation;
-import com.d138.wheere.exception.NotEnoughSeatsException;
+import com.d138.wheere.domain.*;
 import com.d138.wheere.repository.bus.query.BusNumDirDTO;
-import com.d138.wheere.service.BusService;
-import com.d138.wheere.service.DriverService;
-import com.d138.wheere.service.MemberService;
-import com.d138.wheere.service.ReservationService;
+import com.d138.wheere.service.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +27,14 @@ public class MemberController {
     private final ReservationService reservationService;
     private final DriverService driverService;
     private final BusService busService;
+    private final RouteService routeService;
+    private final SeatService seatService;
 
     //사용자 회원가입
-    @PostMapping("/{uId}")
-    public ResponseEntity signUpUser (@PathVariable("uId")String userId, @ModelAttribute MemberDTO memberDTO) {
+    @PostMapping
+    public ResponseEntity signUpUser (@ModelAttribute MemberDTO memberDTO) {
 
+        String userId = memberDTO.getUId();
         String name = memberDTO.getUName();
         LocalDate birthDate = memberDTO.getUBirthDate();
         String phoneNum = memberDTO.getUNum();
@@ -51,12 +50,13 @@ public class MemberController {
     }
 
     //사용자 로그인
-    @PostMapping("/{uId}/login")
-    public  ResponseEntity logInUser (@PathVariable("uId")String userId) {
+    @PostMapping("/login")
+    public  ResponseEntity logInUser (String uId) {
 
-        Member findMember = memberService.findMember(userId);
+        Member findMember = memberService.findMember(uId);
 
         MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setUId(uId);
         memberDTO.setUName(findMember.getName());
         memberDTO.setUBirthDate(findMember.getBirthDate());
         memberDTO.setUNum(findMember.getPhoneNumber());
@@ -64,75 +64,9 @@ public class MemberController {
 
         List<BusNumDirDTO> busNumDirDTO = busService.inquireBusNumDir();
 
-        JSONObject jsonMember = new JSONObject();
-        jsonMember.put("Member", memberDTO);
+        LoginResponse response = new LoginResponse(memberDTO, busNumDirDTO);
 
-        JSONArray jsonBusNumDir = new JSONArray();
-        jsonBusNumDir.addAll(busNumDirDTO);
-
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add(jsonMember);
-        jsonArray.add(jsonBusNumDir);
-
-        return new ResponseEntity(jsonArray, HttpStatus.OK);
-    }
-
-    //예약하기
-    @PostMapping("/resv")
-    public ResponseEntity reserve(@ModelAttribute ReservationDTO resvDTO) {
-
-        String uId = resvDTO.getUId();
-        Long bId = resvDTO.getBId();
-        String rStart = resvDTO.getRStart();
-        String rEnd = resvDTO.getREnd();
-        LocalDate rDate = resvDTO.getRDate();
-
-        try {
-            Long rId = reservationService.saveReservation(uId, bId, rStart, rEnd, rDate);
-            JSONObject rIdJsonResult = new JSONObject();
-            rIdJsonResult.put("rId", rId);
-
-            return new ResponseEntity(rIdJsonResult, HttpStatus.OK);
-        } catch (IllegalStateException e)  {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (NotEnoughSeatsException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    //예약 결과 조회
-    @GetMapping("/resvs/{uId}")
-    public List<ResvResultDTO> searchResv (@PathVariable("uId") String userId) {
-
-        List<Reservation> reservationsByMember = reservationService.findReservationsByMember(userId);
-
-        List<ResvResultDTO> resvResult = new ArrayList<>();
-
-        for (Reservation reservation : reservationsByMember) {
-            ResvResultDTO resvResultDTO = ResvResultDTO.createResResult(userId, true, reservation);
-            resvResult.add(resvResultDTO);
-        }
-
-        JSONArray resultArray = new JSONArray();
-        resultArray.addAll(resvResult);
-
-        return resultArray;
-    }
-
-    //예약 거절
-    @PostMapping("/resv/{uId}")
-    public ResponseEntity cancelResv(@PathVariable("uId") String userId,  Long rId) {
-
-        CancelResultDTO cancelResult = new CancelResultDTO();
-        cancelResult.setRid(rId);
-        cancelResult.setUid(userId);
-
-        try {
-            reservationService.cancelReservation(rId);
-            return new ResponseEntity(cancelResult, HttpStatus.OK);
-        } catch (IllegalStateException e)  {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity(new ObjectResult(response), HttpStatus.OK);
     }
 
     //사용자 정보 수정
@@ -149,26 +83,126 @@ public class MemberController {
 
         Reservation findResv = reservationService.findReservation(rateDriverDTO.getRId());
         Long bId = findResv.getBus().getId();
-        Driver findDriver = driverService.findDriverByBus(bId);
+        LocalDate resvDate = findResv.getReservationDate();
+        Double rate = rateDriverDTO.getRate();
 
-        int beforeCnt = findDriver.getRatingCnt();
-        driverService.reflectScores(bId, rateDriverDTO.getRate());
-
-        //변경 이전 별점과 반영 후 별점 비교
-        if (findDriver.getRatingCnt() == beforeCnt)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        driverService.reflectScores(bId, resvDate, rate);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
     //버스 시간표 조회
     @GetMapping("/bus")
-    public  ResponseEntity checkBusSchedules(CheckBusTimeDTO checkBusTimeDTO) {
-        List<LocalTime> busSchedule = busService.inquireBusDepartureTime(checkBusTimeDTO.getBNumber(), checkBusTimeDTO.getBDir());
+    public  ResponseEntity checkBusSchedules(ScheduleDTO scheduleDTO) {
 
-        JSONArray scheduleResult = new JSONArray();
-        scheduleResult.addAll(busSchedule);
+        String bNumber = scheduleDTO.getBNumber();
+        BusState bDir = scheduleDTO.getBDir();
+        LocalDate rDate = scheduleDTO.getRDate();
+        int startSeq = scheduleDTO.getStartSeq();
+        int endSeq = scheduleDTO.getEndSeq();
 
-        return new ResponseEntity(scheduleResult, HttpStatus.OK);
+        List<Object[]> busSchedule = routeService.inquiryBusSchedule(bNumber, bDir, startSeq, endSeq);
+        List<BusDTO> busDTOList = new ArrayList<>();
+
+        for (Object[] o : busSchedule) {
+            BusDTO busDTO = new BusDTO();
+            for (int i = 0; i < o.length; i++) {
+                busDTO.setBId((Long) o[0]);
+                busDTO.setBStartTime((LocalTime) o[1]);
+
+            }
+            int leftSeat = seatService.inquiryMinLeftSeatNum(bNumber, bDir, rDate, startSeq, endSeq);
+            busDTO.setLeftSeat(leftSeat);
+            busDTOList.add(busDTO);
+        }
+
+        return new ResponseEntity(new BusSchedule(busSchedule), HttpStatus.OK);
+    }
+
+    // 버스 노선 조회
+    @GetMapping("/bus/routes")
+    public ResponseEntity checkBusRoute(CheckBusDTO checkBusDTO) {
+
+        List<Route> routeList = routeService.findBusRouteByBusInfo(checkBusDTO.getBNumber(), checkBusDTO.getBDir());
+
+        List<RouteDTO>routeDTOList = new ArrayList<>();
+
+
+        for (Route route : routeList) {
+            RouteDTO routeDTO = new RouteDTO();
+            routeDTO.setStationSeq(route.getStationSeq());
+            routeDTO.setStationName(route.getStation().getName());
+            routeDTOList.add(routeDTO);
+        }
+
+        return new ResponseEntity(new BusRoute(routeDTOList), HttpStatus.OK);
+    }
+
+
+
+    // 예약 취소
+    @PostMapping("/resv/cancel")
+    public ResponseEntity cancelResv(Long rId) {
+        reservationService.cancelReservation(rId);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static  class BusSchedule<T> {
+        private T schedule;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class ScheduleDTO{
+        private String bNumber;
+        private BusState bDir;
+        private LocalDate rDate;
+        private int startSeq;
+        private int endSeq;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class BusDTO {
+        private Long bId;
+        private LocalTime bStartTime;
+        private LocalTime bArrivalTime;
+        private int leftSeat;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static  class BusRoute<T> {
+        private T routes;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class RouteDTO {
+        private int stationSeq;
+        private String stationName;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static  class ResvResult {
+        private String uId;
+        private String bNumber;
+        private long rId;
+        private LocalDate rTime;
+        private String rStart;
+        private String rEnd;
+        private ReservationState rState;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class ReservationList<T> {
+        private T reservations;
     }
 }
