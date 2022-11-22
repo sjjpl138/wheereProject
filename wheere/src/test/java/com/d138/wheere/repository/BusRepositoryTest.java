@@ -73,8 +73,8 @@ public class BusRepositoryTest {
 
         // Then
         for (BusNumDirDTO busNumDirDTO : busNumDir) {
-            System.out.println("busNumDirDTO = " + busNumDirDTO.getBusNum());
-            System.out.println("busNumDirDTO.getDir() = " + busNumDirDTO.getDir());
+            System.out.println("busNumDirDTO = " + busNumDirDTO.getBNumber());
+            System.out.println("busNumDirDTO.getDir() = " + busNumDirDTO.getBDir());
         }
     }
 

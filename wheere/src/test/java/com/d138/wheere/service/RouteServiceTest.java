@@ -71,15 +71,14 @@ public class RouteServiceTest {
         // When
         String busNum = bus1.getBusNumber();
         BusState direction = bus1.getDirection();
-        List<Object[]> list = routeService.inquiryBusSchedule(busNum, direction, 2, 4);
 
         // Then
 
-        for (Object[] objects : list) {
+       /* for (Object[] objects : list) {
             for (int i = 0; i < objects.length; i++) {
                 System.out.println("objects[" + i +"] = " + objects[i]);
             }
-        }
+        }*/
 
         /*Object[] startObject = (Object[]) list.get(0);
         Object[] midObject = (Object[]) list.get(1);

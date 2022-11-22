@@ -88,9 +88,9 @@ public class SeatServiceTest {
         em.clear();
 
         // Then
-        int i = seatService.inquiryMinLeftSeatNum(bus1.getBusNumber(), bus1.getDirection(), reservationDate, 1, 3);
-        int i2 = seatService.inquiryMinLeftSeatNum(bus1.getBusNumber(), bus1.getDirection(), reservationDate, 3, 4);
-        int i3 = seatService.inquiryMinLeftSeatNum(bus1.getBusNumber(), bus1.getDirection(), reservationDate, 2, 4);
+        int i = seatService.inquiryMinLeftSeatNum(bus1.getId(), reservationDate, 1, 3);
+        int i2 = seatService.inquiryMinLeftSeatNum(bus1.getId(), reservationDate, 3, 4);
+        int i3 = seatService.inquiryMinLeftSeatNum(bus1.getId(), reservationDate, 2, 4);
 
         System.out.println("i = " + i);
         System.out.println("i2 = " + i2);

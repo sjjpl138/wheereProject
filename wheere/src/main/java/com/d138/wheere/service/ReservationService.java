@@ -118,7 +118,7 @@ public class ReservationService {
     }
 
     private void compareBusDepartureTime(Route route, LocalDate reservationDate) {
-        if ((LocalTime.now().isAfter(route.getArrivalTime())&& (!LocalDate.now().isAfter(reservationDate))) || (LocalDate.now().isAfter(reservationDate)))
+        if ((LocalTime.now().isAfter(route.getArrivalTime())&& (!LocalDate.now().isBefore(reservationDate))) || (LocalDate.now().isAfter(reservationDate)))
             throw new IllegalStateException("해당 버스에 대해 예약이 불가능합니다.");
     }
 
