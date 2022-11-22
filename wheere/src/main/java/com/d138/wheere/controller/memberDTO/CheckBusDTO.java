@@ -1,12 +1,10 @@
 package com.d138.wheere.controller.memberDTO;
 
 import com.d138.wheere.domain.BusState;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-public class CheckBusTimeDTO {
+@Data
+public class CheckBusDTO {
     private String bNumber;
     private BusState bDir;
 }

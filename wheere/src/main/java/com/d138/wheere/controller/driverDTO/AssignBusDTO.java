@@ -1,17 +1,18 @@
 package com.d138.wheere.controller.driverDTO;
 
 import com.d138.wheere.domain.BusState;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Getter
-@Setter
+@Data
 public class AssignBusDTO {
+    private String dId;
     private String bNumber;
     private BusState bDir;
     @DateTimeFormat(pattern = "HH:mm:ss")
     private LocalTime bStartTime;
+    private LocalDate bOperationDate;
 }

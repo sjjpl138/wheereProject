@@ -1,12 +1,10 @@
 package com.d138.wheere.controller.memberDTO;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class CancelResultDTO {
-    private String uid;
-    private Long rid;
+    private String uId;
+    private Long rId;
 
 }

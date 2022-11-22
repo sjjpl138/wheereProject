@@ -1,14 +1,10 @@
 package com.d138.wheere.controller.driverDTO;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 public class DriverResvResultDTO {
     private Long rId;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

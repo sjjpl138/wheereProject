@@ -4,17 +4,13 @@ import com.d138.wheere.domain.Reservation;
 import com.d138.wheere.domain.ReservationState;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
-
+import lombok.Data;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
-@Getter
-@Setter
+
+@Data
 @AllArgsConstructor
 public class ResvResultDTO {
     private String  uId;

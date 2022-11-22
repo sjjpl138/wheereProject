@@ -5,13 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
+
 public class BusNumDirDTO {
 
-    private String busNum;
-    private BusState dir;
-
-    public BusNumDirDTO(String busNum, BusState dir) {
-        this.busNum = busNum;
-        this.dir = dir;
-    }
+    private String bNumber;
+    private BusState bDir;
 }
