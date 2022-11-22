@@ -44,4 +44,15 @@ public class BusService {
     public List<LocalTime> inquireBusDepartureTime(String busNum, BusState direction) {
         return busRepository.findDepartureTime(busNum, direction);
     }
+
+    /**
+     * 사용자 8. 버스 시간표 조회에서 사용됨
+     * 버스 번호 조회
+     * @param busNum
+     * @param direction
+     * @return
+     */
+    public List<Long> inquireBusIdByBusNumAndDirection(String busNum, BusState direction) {
+        return busRepository.findBusIdByBusNumAndDirection(busNum, direction);
+    }
 }

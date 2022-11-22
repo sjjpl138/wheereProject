@@ -17,6 +17,7 @@ public class BusRepository {
 
     /**
      * 버스 ID (PK)로 버스 조회
+     *
      * @param busId
      * @return
      */
@@ -28,8 +29,9 @@ public class BusRepository {
     /**
      * 버스 번호, 방향, 출발 시간으로 버스 조회
      * 버스 예약, 버스 배차에 사용됨
-     * @param busNum 버스 번호
-     * @param busState 버스 방향 (정방향, 역방향)
+     *
+     * @param busNum        버스 번호
+     * @param busState      버스 방향 (정방향, 역방향)
      * @param departureTime (출발 시간)
      * @return 조회하려는 버스
      */
@@ -44,6 +46,21 @@ public class BusRepository {
     // 버스 출발 시간 조회 메서드
     public List<LocalTime> findDepartureTime(String busNum, BusState direction) {
         return em.createQuery("select b.departureTime from Bus b where b.busNumber = :busNum and b.direction = :direction", LocalTime.class)
+                .setParameter("busNum", busNum)
+                .setParameter("direction", direction)
+                .getResultList();
+    }
+
+    /**
+     * 사용자 8. 버스 시간표 조회에서 사용됨
+     * @param busNum 버스 번호
+     * @param direction 버스 방향
+     * @return 버스 ID (PK)
+     */
+    public List<Long> findBusIdByBusNumAndDirection(String busNum, BusState direction) {
+        return em.createQuery("select b.id from Bus b" +
+                        " where b.busNumber = :busNum" +
+                        " and b.direction = :direction", Long.class)
                 .setParameter("busNum", busNum)
                 .setParameter("direction", direction)
                 .getResultList();

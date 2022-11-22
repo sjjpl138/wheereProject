@@ -91,7 +91,7 @@ public class MemberController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    //버스 시간표 조회
+    // 8. 버스 시간표 조회
     @GetMapping("/bus")
     public  ResponseEntity checkBusSchedules(ScheduleDTO scheduleDTO) {
 
@@ -101,22 +101,20 @@ public class MemberController {
         int startSeq = scheduleDTO.getStartSeq();
         int endSeq = scheduleDTO.getEndSeq();
 
-        List<Object[]> busSchedule = routeService.inquiryBusSchedule(bNumber, bDir, startSeq, endSeq);
         List<BusDTO> busDTOList = new ArrayList<>();
 
-        for (Object[] o : busSchedule) {
-            BusDTO busDTO = new BusDTO();
-            for (int i = 0; i < o.length; i++) {
-                busDTO.setBId((Long) o[0]);
-                busDTO.setBStartTime((LocalTime) o[1]);
+        List<Long> busIdList = busService.inquireBusIdByBusNumAndDirection(bNumber, bDir);
 
-            }
-            int leftSeat = seatService.inquiryMinLeftSeatNum(bNumber, bDir, rDate, startSeq, endSeq);
-            busDTO.setLeftSeat(leftSeat);
+        for (Long busId : busIdList) {
+            LocalTime startTime = routeService.inquireBusIdByBusAndSeq(busId, startSeq);
+            LocalTime arrivalTime = routeService.inquireBusIdByBusAndSeq(busId, endSeq);
+            int leftSeatNum = seatService.inquiryMinLeftSeatNum(busId, rDate, startSeq, endSeq);
+
+            BusDTO busDTO = new BusDTO(busId, startTime, arrivalTime, leftSeatNum);
             busDTOList.add(busDTO);
         }
 
-        return new ResponseEntity(new BusSchedule(busSchedule), HttpStatus.OK);
+        return new ResponseEntity(new BusSchedule(busDTOList), HttpStatus.OK);
     }
 
     // 버스 노선 조회

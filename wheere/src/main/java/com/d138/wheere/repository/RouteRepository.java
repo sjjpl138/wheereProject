@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -83,15 +84,18 @@ public class RouteRepository {
                 .getResultList();
     }
 
-    // TODO (어..)
-    public List<Object[]> inquiryBusSchedule(String busNum, BusState direction, List<Integer> seqList) {
-        return em.createQuery("select b.id, r.arrivalTime" +
-                        " from Route r" +
-                        " join r.bus b on b.busNumber = :busNum and b.direction = :direction" +
-                        " where r.stationSeq in :seqList", Object[].class)
-                .setParameter("busNum", busNum)
-                .setParameter("direction", direction)
-                .setParameter("seqList", seqList)
-                .getResultList();
+    /**
+     * 사용자 8. 버스 시간표 조회에서 호출됨
+     * @param busId 버스 ID (PK)
+     * @param stationSeq 정류장 순번
+     * @return 해당 정류장에 버스가 도착하는 시간
+     */
+    public LocalTime findTimeByBusAndSeq(Long busId, int stationSeq) {
+        return em.createQuery("select r.arrivalTime from Route r" +
+                        " join r.bus b on b.id = :busId" +
+                        " where r.stationSeq = :stationSeq", LocalTime.class)
+                .setParameter("busId", busId)
+                .setParameter("stationSeq", stationSeq)
+                .getSingleResult();
     }
 }

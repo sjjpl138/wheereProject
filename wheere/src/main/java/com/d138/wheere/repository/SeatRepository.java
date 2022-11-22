@@ -40,14 +40,13 @@ public class SeatRepository {
     }
 
     // TODO (어..)
-    public int inquiryMinLeftSeatNum(String busNum, BusState busState, LocalDate reservationDate, List<Integer> seqList) {
+    public int inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, List<Integer> seqList) {
         return em.createQuery("select min(s.leftSeatsNum)" +
                         " from Seat s" +
                         " join s.route r on r.stationSeq in :seqList" +
-                        " join r.bus b on b.busNumber = :busNum and b.direction = :busState" +
+                        " join r.bus b on b.id = :busId" +
                         " where s.reservationDate = :reservationDate", Integer.class)
-                .setParameter("busNum", busNum)
-                .setParameter("busState", busState)
+                .setParameter("busId", busId)
                 .setParameter("seqList", seqList)
                 .setParameter("reservationDate", reservationDate)
                 .getSingleResult();

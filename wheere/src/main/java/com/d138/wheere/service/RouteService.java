@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,15 +29,12 @@ public class RouteService {
     }
 
     /**
-     * 8. 버스 시간표 조회 /user/bus - GET 에서 호출됨
-     * @param busNum
-     * @param direction
-     * @param startSeq
-     * @param endSeq
-     * @return
+     * 사용자 8. 버스 시간표 조회에서 호출됨
+     * @param busId 버스 ID (PK)
+     * @param stationSeq 정류장 순번
+     * @return 해당 정류장에 버스가 도착하는 시간
      */
-    public List<Object[]> inquiryBusSchedule(String busNum, BusState direction, int startSeq, int endSeq) {
-        List<Integer> seqList = Arrays.asList(startSeq, endSeq);
-        return routeRepository.inquiryBusSchedule(busNum, direction, seqList);
+    public LocalTime inquireBusIdByBusAndSeq(Long busId, int stationSeq) {
+        return routeRepository.findTimeByBusAndSeq(busId, stationSeq);
     }
 }

@@ -19,18 +19,17 @@ public class SeatService {
 
     /**
      * 8. 버스 시간표 조회 /user/bus - GET 에서 호출됨
-     * @param busNum
-     * @param busState
-     * @param reservationDate
-     * @param startSeq
-     * @param endSeq
-     * @return
+     * @param busId 버스 ID (PK)
+     * @param reservationDate 예약 날짜
+     * @param startSeq 승차 정류장 순번
+     * @param endSeq 하차 정류장 순번
+     * @return 예약 가능한 남은 좌석 수
      */
-    public int inquiryMinLeftSeatNum(String busNum, BusState busState, LocalDate reservationDate, int startSeq, int endSeq) {
+    public int inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, int startSeq, int endSeq) {
         List<Integer> seqList = new ArrayList<>();
         for(int i = startSeq; i <= endSeq; i++)
             seqList.add(i);
 
-        return seatRepository.inquiryMinLeftSeatNum(busNum, busState, reservationDate, seqList);
+        return seatRepository.inquiryMinLeftSeatNum(busId, reservationDate, seqList);
     }
 }
