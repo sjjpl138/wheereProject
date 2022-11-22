@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -34,7 +33,7 @@ public class RouteService {
      * @param stationSeq 정류장 순번
      * @return 해당 정류장에 버스가 도착하는 시간
      */
-    public LocalTime inquireBusIdByBusAndSeq(Long busId, int stationSeq) {
+    public LocalTime inquireTimeByBusAndSeq(Long busId, int stationSeq) {
         return routeRepository.findTimeByBusAndSeq(busId, stationSeq);
     }
 }
