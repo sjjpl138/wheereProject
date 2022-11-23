@@ -15,7 +15,7 @@ import javax.persistence.Id;
 public class Station {
 
     @Id
-    @Column(name = "SATION_ID")
+    @Column(name = "STATION_ID")
     private Long id;
 
     private String name;
