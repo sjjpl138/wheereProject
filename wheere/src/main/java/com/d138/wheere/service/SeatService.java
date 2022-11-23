@@ -27,7 +27,7 @@ public class SeatService {
      */
     public int inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, int startSeq, int endSeq) {
         List<Integer> seqList = new ArrayList<>();
-        for(int i = startSeq; i <= endSeq; i++)
+        for(int i = startSeq; i < endSeq; i++)
             seqList.add(i);
 
         return seatRepository.inquiryMinLeftSeatNum(busId, reservationDate, seqList);
