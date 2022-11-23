@@ -16,26 +16,7 @@ public class DriverRepository {
 
     private final EntityManager em;
 
-    public String save(Driver driver) {
-        em.persist(driver);
-        return driver.getId();
-    }
-
     public Driver findOne(String driverId) {
         return em.find(Driver.class, driverId);
-    }
-
-    public Driver findByBusId(Long busId) {
-        return em.createQuery("select d from Driver d join d.bus b where b.id = :busId", Driver.class)
-                .setParameter("busId", busId).getSingleResult(); // NoResultException 예외 처리 필요
-    }
-
-    public List<Driver> findByName(String name) {
-        return em.createQuery("select d from Driver d where d.name = :name", Driver.class)
-                .setParameter("name", name).getResultList();
-    }
-
-    public List<Driver> findAll() {
-        return em.createQuery("select d from Driver d", Driver.class).getResultList();
     }
 }

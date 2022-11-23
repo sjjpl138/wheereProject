@@ -27,18 +27,6 @@ public class DriverService {
     private final BusDriverRepository busDriverRepository;
 
     /**
-     * 버스 기사 회원 가입 시 사용
-     * @param driver
-     * @return 버스기사ID (PK)
-     */
-    @Transactional
-    public String join(Driver driver) {
-        driverRepository.save(driver);
-
-        return driver.getId();
-    }
-
-    /**
      * 버스 기사 평점 반영할 때 호출됨
      * 버스 ID (PK), 운행 날짜, 평점 필요
      * @param busId 버스 ID (PK)
@@ -48,10 +36,6 @@ public class DriverService {
      */
     @Transactional
     public double reflectScores (Long busId, LocalDate operationDate, double score) {
-
-        // TODO (버스 기사 평점 남기기 구현)
-        // 사용자의 예약 상태가 완료 (COMP)인 경우에만 가능하도록-> 파라미터로 사용자 ID나 예약 ID 추가로 받아야 할 듯
-        // 아니면 예외 발생
 
         BusDriver findBusDriver = busDriverRepository.findBusDriverWithDriver(busId, operationDate);
         Driver findDriver = findBusDriver.getDriver();
@@ -67,15 +51,15 @@ public class DriverService {
      * [운행 날짜], [버스 번호, 방향, 출발 시간], [버스기사 ID]를 받아와 해당 버스를 배정한다.
      * @param operationDate 운행 날짜
      * @param busNum 버스 번호
-     * @param busState 버스 방향 (정방향, 역방향)
+     * @param direction 버스 방향 (정방향, 역방향)
      * @param departureTime 출발 시간
      * @param driverId 버스기사 ID (PK)
      * @return 생성된 BusDriver ID (PK)
      */
     @Transactional
-    public Long selectBus(LocalDate operationDate, String busNum, BusState busState, LocalTime departureTime, String driverId) {
+    public Long selectBus(LocalDate operationDate, String busNum, BusState direction, LocalTime departureTime, String driverId) {
 
-        Bus findBus = busRepository.findBus(busNum, busState, departureTime);
+        Bus findBus = busRepository.findBus(busNum, direction, departureTime);
 
         Driver findDriver = driverRepository.findOne(driverId);
 

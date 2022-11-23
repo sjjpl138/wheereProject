@@ -93,7 +93,7 @@ public class ReservationService {
         }
     }
 
-    private static void calSubSeats(List<Seat> seats) {
+    private void calSubSeats(List<Seat> seats) {
         for (int i = 0; i < seats.size() - 1; i++) {
             seats.get(i).subSeats();
         }
@@ -175,6 +175,10 @@ public class ReservationService {
         }
     }
 
+    /**
+     * 예약 승인
+     * @param reservationId
+     */
     @Transactional
     public void permitReservation(Long reservationId) {
         // 예약 엔티티 조회
@@ -183,6 +187,10 @@ public class ReservationService {
         findReservation.permit();
     }
 
+    /**
+     * 운행 완료
+     * @param reservationId
+     */
     @Transactional
     public void completeReservation(Long reservationId) {
         // 예약 엔티티 조회
@@ -191,26 +199,27 @@ public class ReservationService {
         findReservation.complete();
     }
 
-    // TODO [예약 상태 변경 (운행 완료, COMP) 구현해야 함]
-
+    /**
+     * 예약 ID (PK)로 예약 엔티티 조회
+     * @param reservationId 예약 ID (PK)
+     * @return 예약 엔티티
+     */
     public Reservation findReservation(Long reservationId) {
         return reservationRepository.findOne(reservationId);
     }
 
-    // 특정 사용자에 대한 모든 예약 정보 조회
+    /**
+     * 특정 사용자에 대한 모든 예약 정보 조회
+     * @param memberId
+     * @return
+     */
     public List<Reservation> findReservationsByMember(String memberId) {
         return reservationRepository.findByMember(memberId);
     }
 
-    // 특정 버스에 대한 모든 예약 정보 조회
-    public List<Reservation> findReservationsByBus(Long busId) {
-        return reservationRepository.findByBus(busId);
-    }
-
-    // 특정 버스, 특정 날짜에 대한 예약 검색
-
     /**
      * 버스 기사가 자신이 운행하는 버스에 대한 예약 조회
+     * 특정 버스, 특정 날짜에 대한 예약 검색
      * @param busId
      * @param reservationDate
      * @return

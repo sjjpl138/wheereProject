@@ -35,11 +35,6 @@ public class ReservationRepository {
                 .getResultList();
     }
 
-    public List<Reservation> findByBus(Long busId) {
-        return em.createQuery("select r from Reservation r join r.bus b on b.id = :busId", Reservation.class)
-                .setParameter("busId", busId).getResultList();
-    }
-
     // 특정 버스, 특정 날짜에 대한 예약 검색
     // TODO (정류소 순번별로 정렬해야 함)
     public List<Reservation> findByBusAndDate(Long busId, LocalDate reservationDate) {
@@ -60,8 +55,10 @@ public class ReservationRepository {
      * @return 특정 날짜 특정 버스에 대한 사용자의 예약 기록
      */
     public List<Reservation> checkScheduleDuplication(String memberId, Long busId, LocalDate reservationDate) {
-
-        return em.createQuery("select r from Reservation r join r.bus b join r.member m on b.id = :busId and m.id = :memberId where r.reservationDate = :reservationDate", Reservation.class)
+        return em.createQuery("select r from Reservation r" +
+                        " join r.bus b on b.id = :busId" +
+                        " join r.member m on m.id = :memberId" +
+                        " where r.reservationDate = :reservationDate", Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("memberId", memberId)
                 .setParameter("reservationDate", reservationDate)

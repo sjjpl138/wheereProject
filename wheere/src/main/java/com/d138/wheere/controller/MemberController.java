@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -106,8 +105,8 @@ public class MemberController {
         List<Long> busIdList = busService.inquireBusIdByBusNumAndDirection(bNumber, bDir);
 
         for (Long busId : busIdList) {
-            LocalTime startTime = routeService.inquireBusIdByBusAndSeq(busId, startSeq);
-            LocalTime arrivalTime = routeService.inquireBusIdByBusAndSeq(busId, endSeq);
+            LocalTime startTime = routeService.inquireTimeByBusAndSeq(busId, startSeq);
+            LocalTime arrivalTime = routeService.inquireTimeByBusAndSeq(busId, endSeq);
             int leftSeatNum = seatService.inquiryMinLeftSeatNum(busId, rDate, startSeq, endSeq);
 
             BusDTO busDTO = new BusDTO(busId, startTime, arrivalTime, leftSeatNum);
