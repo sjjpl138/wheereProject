@@ -45,6 +45,12 @@ public class DriverController {
 
         return new ResponseEntity(new ObjectResult(response), HttpStatus.OK);
     }
+    @Data
+    @AllArgsConstructor
+    static class BusNumDirDto {
+        private String bNumber;
+        private BusState bDir;
+    }
 
 
     //    버스 기사 평점 조회
@@ -78,7 +84,7 @@ public class DriverController {
 
     //버스기사 버스 배정
     @PostMapping("/bus")
-    public  ResponseEntity assignBus(@RequestBody AssignBusDTO assignBusDTO) {
+    public  ResponseEntity assignBus( AssignBusDTO assignBusDTO) {
         String driverId = assignBusDTO.getDId();
         Long bId = assignBusDTO.getBId();
         LocalDate bOperationDate = assignBusDTO.getBOperationDate();

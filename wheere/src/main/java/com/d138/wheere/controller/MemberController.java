@@ -38,13 +38,23 @@ public class MemberController {
 
     //사용자 회원가입
     @PostMapping
-    public ResponseEntity signUpUser (@RequestBody MemberDTO memberDTO) {
+    public ResponseEntity signUpUser(MemberDTO memberDTO) {
 
         String userId = memberDTO.getUId();
         String name = memberDTO.getUName();
         LocalDate birthDate = memberDTO.getUBirthDate();
         String phoneNum = memberDTO.getUNum();
         String sex = memberDTO.getUSex();
+
+        System.out.println("memberDTO = " + memberDTO);
+
+        System.out.println("===========================================");
+        System.out.println("userId = " + userId);
+        System.out.println("name = " + name);
+        System.out.println("birthDate = " + birthDate);
+        System.out.println("phoneNum = " + phoneNum);
+        System.out.println("sex = " + sex);
+        System.out.println("===========================================");
 
         Member member = new Member(userId, name, birthDate, phoneNum, sex);
         memberService.join(member);
@@ -55,7 +65,11 @@ public class MemberController {
 
     //사용자 로그인
     @PostMapping("/login")
-    public  ResponseEntity logInUser (String uId) {
+    public ResponseEntity logInUser(String uId) {
+
+        System.out.println("=====================================");
+        System.out.println("uId = " + uId);
+        System.out.println("=====================================");
 
         Member findMember = memberService.findMember(uId);
 
@@ -68,22 +82,27 @@ public class MemberController {
 
         List<BusNumDirDTO> busNumDirDTO = busService.inquireBusNumDir();
 
+        System.out.println("===================== test ===================");
+
         LoginResponse response = new LoginResponse(memberDTO, busNumDirDTO);
+
+        System.out.println("===================== test2 ===================");
+
 
         return new ResponseEntity(new ObjectResult(response), HttpStatus.OK);
     }
 
     //사용자 정보 수정
     @PutMapping("/{uId}")
-    public  ResponseEntity updateUser (@PathVariable("uId") String userId, @RequestBody MemberDTO memberDTO) {
+    public ResponseEntity updateUser(@PathVariable("uId") String userId, MemberDTO memberDTO) {
         memberService.modifyPhoneNumber(userId, memberDTO.getUNum());
 
-        return  new ResponseEntity(memberDTO, HttpStatus.OK);
+        return new ResponseEntity(memberDTO, HttpStatus.OK);
     }
 
     //버스 기사 평점
     @PostMapping("/rate")
-    public  ResponseEntity rateDriver (@RequestBody RateDriverDTO rateDriverDTO) {
+    public ResponseEntity rateDriver(RateDriverDTO rateDriverDTO) {
 
         Reservation findResv = reservationService.findReservation(rateDriverDTO.getRId());
         Long bId = findResv.getBus().getId();
@@ -97,7 +116,7 @@ public class MemberController {
 
     // 8. 버스 시간표 조회
     @GetMapping("/bus")
-    public  ResponseEntity checkBusSchedules(ScheduleDTO scheduleDTO) {
+    public ResponseEntity checkBusSchedules(ScheduleDTO scheduleDTO) {
 
         String bNumber = scheduleDTO.getBNumber();
         BusState bDir = scheduleDTO.getBDir();
@@ -116,7 +135,7 @@ public class MemberController {
             LocalTime arrivalTime = routeService.inquireTimeByBusAndSeq(busId, endSeq);
 
             List<Integer> leftSeatNumList = seatService.inquireMinLeftSeatNum(busId, rDate, startSeq, endSeq);
-            if (leftSeatNumList.isEmpty()) {
+            if (leftSeatNumList != null) {
                 leftSeatNum = 2;
             } else {
                 leftSeatNum = leftSeatNumList.get(0);
@@ -132,9 +151,14 @@ public class MemberController {
     @GetMapping("/bus/routes")
     public ResponseEntity checkBusRoute(CheckBusDTO checkBusDTO) {
 
+        System.out.println("=============================================");
+        System.out.println("checkBusDTO.getBNumber() = " + checkBusDTO.getBNumber());
+        System.out.println("checkBusDTO.getBDir( = " + checkBusDTO.getBDir());
+        System.out.println("=============================================");
+
         List<Route> routeList = routeService.findBusRouteByBusInfo(checkBusDTO.getBNumber(), checkBusDTO.getBDir());
 
-        List<RouteDTO>routeDTOList = new ArrayList<>();
+        List<RouteDTO> routeDTOList = new ArrayList<>();
 
 
         for (Route route : routeList) {
@@ -150,6 +174,8 @@ public class MemberController {
     // 예약 조회
     @GetMapping("/resvs/{uid}")
     public ResponseEntity inquiryReservationByMember(@PathVariable("uid") String memberId) {
+
+        System.out.println("memberId = " + memberId);
 
         List<Reservation> findReservations = reservationService.findReservationsByMember(memberId);
 
@@ -184,12 +210,12 @@ public class MemberController {
                 for (BusDriver bd : busDrivers) {
                     dId = bd.getDriver().getId();
                 }
-                notificationService.send(dId, rId ,startSeq, endSeq, rTime);
+                notificationService.send(dId, rId, startSeq, endSeq, rTime);
             }
 
-            return new ResponseEntity( HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
 
-        } catch (IllegalStateException e)  {
+        } catch (IllegalStateException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NotEnoughSeatsException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -237,13 +263,13 @@ public class MemberController {
 
     @Data
     @AllArgsConstructor
-    static  class BusSchedule<T> {
+    static class BusSchedule<T> {
         private T schedule;
     }
 
     @Data
     @AllArgsConstructor
-    static class ScheduleDTO{
+    static class ScheduleDTO {
         private String bNumber;
         private BusState bDir;
         @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -264,7 +290,7 @@ public class MemberController {
 
     @Data
     @AllArgsConstructor
-    static  class BusRoute<T> {
+    static class BusRoute<T> {
         private T routes;
     }
 
@@ -278,7 +304,7 @@ public class MemberController {
 
     @Data
     @AllArgsConstructor
-    static  class ResvResult {
+    static class ResvResult {
         private String uId;
         private String bNumber;
         private long rId;

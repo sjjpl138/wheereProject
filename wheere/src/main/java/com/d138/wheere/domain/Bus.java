@@ -38,7 +38,6 @@ public class Bus {
     private String busNumber;
 
     // 버스 출발 시간
-    @DateTimeFormat(pattern = "hh:mm:ss")
     private LocalTime departureTime;
 
     public Bus(Long id, int busAllocationSeq, BusState direction, String busNumber, LocalTime departureTime) {

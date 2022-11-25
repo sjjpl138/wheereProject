@@ -15,7 +15,7 @@ public class Reservation extends BaseEntity{
     // TODO (BaseEntity 추가하기)
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RESERVATION_ID")
     private Long id;
 

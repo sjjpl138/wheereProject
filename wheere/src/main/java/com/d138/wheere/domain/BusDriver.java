@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class BusDriver {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BUS_DRIVER_ID")
     private Long id;
 

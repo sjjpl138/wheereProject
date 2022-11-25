@@ -69,16 +69,16 @@ public class BusRepositoryTest {
         em.flush();
         em.clear();
 
-        List<BusNumDirDTO> busNumDir = busQueryRepository.findBusNumDir();
+        /*List<BusNumDirDTO> busNumDir = busQueryRepository.findBusNumDir();
 
         // Then
         for (BusNumDirDTO busNumDirDTO : busNumDir) {
             System.out.println("busNumDirDTO = " + busNumDirDTO.getBNumber());
             System.out.println("busNumDirDTO.getDir() = " + busNumDirDTO.getBDir());
-        }
+        }*/
     }
 
-    @Test
+    /*@Test
     public void 버스_출발시간_조회_테스트() {
 
         // Given
@@ -99,5 +99,5 @@ public class BusRepositoryTest {
         for (LocalTime departureTime : departureTimes) {
             System.out.println("departureTime = " + departureTime);
         }
-    }
+    }*/
 }
