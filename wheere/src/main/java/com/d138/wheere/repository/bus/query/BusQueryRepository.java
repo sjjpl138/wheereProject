@@ -17,7 +17,7 @@ public class BusQueryRepository {
         return em.createQuery("select new com.d138.wheere.repository.bus.query.BusNumDirDTO(b.busNumber, b.direction)"
                 + " from Bus b"
                 + " where b.busAllocationSeq = 1"
-                + " order by (b.busNumber, b.direction)", BusNumDirDTO.class)
+                + " order by b.busNumber DESC", BusNumDirDTO.class)
                 .getResultList();
     }
 }
