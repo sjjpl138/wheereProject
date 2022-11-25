@@ -84,7 +84,7 @@ public class DriverController {
         LocalDate bOperationDate = assignBusDTO.getBOperationDate();
 
         try {
-//            driverService.selectBus();
+            driverService.selectBus(bOperationDate, bId, driverId);
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);

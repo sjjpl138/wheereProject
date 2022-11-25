@@ -50,16 +50,14 @@ public class DriverService {
      * 예외처리 필요
      * [운행 날짜], [버스 번호, 방향, 출발 시간], [버스기사 ID]를 받아와 해당 버스를 배정한다.
      * @param operationDate 운행 날짜
-     * @param busNum 버스 번호
-     * @param direction 버스 방향 (정방향, 역방향)
-     * @param departureTime 출발 시간
+     * @param busId 버스 ID (PK)
      * @param driverId 버스기사 ID (PK)
      * @return 생성된 BusDriver ID (PK)
      */
     @Transactional
-    public Long selectBus(LocalDate operationDate, String busNum, BusState direction, LocalTime departureTime, String driverId) {
+    public Long selectBus(LocalDate operationDate, Long busId, String driverId) {
 
-        Bus findBus = busRepository.findBus(busNum, direction, departureTime);
+        Bus findBus = busRepository.findOne(busId);
 
         Driver findDriver = driverRepository.findOne(driverId);
 

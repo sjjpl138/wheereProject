@@ -55,7 +55,7 @@ public class DriverServiceTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
 
         // When
-        Long busDriverId = driverService.selectBus(date, busNumber, direction, departureTime, driver.getId());
+        Long busDriverId = driverService.selectBus(date, busId, driver.getId());
 
         em.flush();
         em.clear();
@@ -81,7 +81,7 @@ public class DriverServiceTest {
 
         LocalDate date = LocalDate.of(2022, 1, 1);
 
-        Long busDriverId = driverService.selectBus(date, busNumber, direction, departureTime, driver.getId());
+        Long busDriverId = driverService.selectBus(date, busId, driver.getId());
 
         em.flush();
         em.clear();

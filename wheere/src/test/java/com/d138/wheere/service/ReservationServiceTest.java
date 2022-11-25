@@ -168,6 +168,10 @@ public class ReservationServiceTest {
         em.clear();
         Reservation findReservation20 = reservationRepository.findOne(findReservationId1);
         assertThat(findReservation20.getReservationState()).isEqualTo(ReservationState.COMP);
+
+        Reservation findReservation = reservationRepository.findOne(findReservationId1);
+        System.out.println("findReservation.getCreateDate( = " + findReservation.getCreateDate());
+        System.out.println("findReservation.getLastModifiedDate( = " + findReservation.getLastModifiedDate());
     }
 
     @Test
