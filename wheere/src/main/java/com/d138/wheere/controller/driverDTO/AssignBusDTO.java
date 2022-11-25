@@ -10,9 +10,7 @@ import java.time.LocalTime;
 @Data
 public class AssignBusDTO {
     private String dId;
-    private String bNumber;
-    private BusState bDir;
+    private Long bId;
     @DateTimeFormat(pattern = "HH:mm:ss")
-    private LocalTime bStartTime;
-    private LocalDate bOperationDate;
+    private LocalTime bOperationDate;
 }
