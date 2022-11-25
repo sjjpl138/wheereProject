@@ -105,6 +105,8 @@ public class MemberController {
         int startSeq = scheduleDTO.getStartSeq();
         int endSeq = scheduleDTO.getEndSeq();
 
+        int leftSeatNum;
+
         List<BusDTO> busDTOList = new ArrayList<>();
 
         List<Long> busIdList = busService.inquireBusIdByBusNumAndDirection(bNumber, bDir);
@@ -113,9 +115,12 @@ public class MemberController {
             LocalTime startTime = routeService.inquireTimeByBusAndSeq(busId, startSeq);
             LocalTime arrivalTime = routeService.inquireTimeByBusAndSeq(busId, endSeq);
 
-            int leftSeatNum = seatService.inquiryMinLeftSeatNum(busId, rDate, startSeq, endSeq);
-            System.out.println("!! leftSeatNum = " + leftSeatNum);
-
+            List<Integer> leftSeatNumList = seatService.inquireMinLeftSeatNum(busId, rDate, startSeq, endSeq);
+            if (leftSeatNumList.isEmpty()) {
+                leftSeatNum = 2;
+            } else {
+                leftSeatNum = leftSeatNumList.get(0);
+            }
             BusDTO busDTO = new BusDTO(busId, startTime, arrivalTime, leftSeatNum);
             busDTOList.add(busDTO);
         }

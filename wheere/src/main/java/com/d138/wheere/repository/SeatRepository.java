@@ -40,7 +40,7 @@ public class SeatRepository {
     }
 
     // TODO (어..)
-    public int inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, List<Integer> seqList) {
+    public List<Integer> inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, List<Integer> seqList) {
         return em.createQuery("select min(s.leftSeatsNum)" +
                         " from Seat s" +
                         " join s.route r on r.stationSeq in :seqList" +
@@ -49,6 +49,6 @@ public class SeatRepository {
                 .setParameter("busId", busId)
                 .setParameter("seqList", seqList)
                 .setParameter("reservationDate", reservationDate)
-                .getSingleResult();
+                .getResultList();
     }
 }

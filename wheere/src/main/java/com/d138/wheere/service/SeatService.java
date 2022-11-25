@@ -1,6 +1,5 @@
 package com.d138.wheere.service;
 
-import com.d138.wheere.domain.BusState;
 import com.d138.wheere.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,7 @@ public class SeatService {
      * @param endSeq 하차 정류장 순번
      * @return 예약 가능한 남은 좌석 수
      */
-    public int inquiryMinLeftSeatNum(Long busId, LocalDate reservationDate, int startSeq, int endSeq) {
+    public List<Integer> inquireMinLeftSeatNum(Long busId, LocalDate reservationDate, int startSeq, int endSeq) {
         List<Integer> seqList = new ArrayList<>();
         for(int i = startSeq; i < endSeq; i++)
             seqList.add(i);
