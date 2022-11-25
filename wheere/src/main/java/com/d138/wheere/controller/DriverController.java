@@ -8,25 +8,18 @@ import com.d138.wheere.repository.bus.query.BusNumDirDTO;
 import com.d138.wheere.service.BusService;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.ReservationService;
-import com.d138.wheere.service.SSE.NotificationService;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.xml.bind.v2.TODO;
 import lombok.*;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.d138.wheere.service.SSE.NotificationService.*;
 
 @RestController
 @RequestMapping("/driver")
@@ -88,7 +81,7 @@ public class DriverController {
     public  ResponseEntity assignBus(@RequestBody AssignBusDTO assignBusDTO) {
         String driverId = assignBusDTO.getDId();
         Long bId = assignBusDTO.getBId();
-        LocalTime bOperationDate = assignBusDTO.getBOperationDate();
+        LocalDate bOperationDate = assignBusDTO.getBOperationDate();
 
         try {
 //            driverService.selectBus();
