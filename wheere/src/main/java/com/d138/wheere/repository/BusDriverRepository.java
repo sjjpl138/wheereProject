@@ -55,4 +55,13 @@ public class BusDriverRepository {
                 .setParameter("operationDate", operationDate)
                 .getSingleResult();
     }
+
+    public List<BusDriver> findBusDriverListWithDriver(Long busId, LocalDate operationDate) {
+        return em.createQuery("select bd from BusDriver bd"
+                        + " join bd.bus b on b.id = :busId"
+                        + " where bd.operationDate = :operationDate", BusDriver.class)
+                .setParameter("busId", busId)
+                .setParameter("operationDate", operationDate)
+                .getResultList();
+    }
 }

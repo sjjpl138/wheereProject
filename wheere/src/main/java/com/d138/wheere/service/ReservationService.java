@@ -25,6 +25,7 @@ public class ReservationService {
     /**
      * 예약 생성
      * 사용자가 예약 UI 화면에서 정보 입력 후 예약하기 클릭 시 호출됨
+     *
      * @param memberId
      * @param busId
      * @param startSeq
@@ -69,7 +70,7 @@ public class ReservationService {
 
     private void subSeatsPerRoute(int startSeq, int endSeq, LocalDate reservationDate, Bus bus) {
         List<Integer> seqList = new ArrayList<>();
-        for(int i = startSeq; i <= endSeq; i++)
+        for (int i = startSeq; i <= endSeq; i++)
             seqList.add(i);
 
         List<Seat> findSeats = seatRepository.findSeatsByBusAndDate(bus.getId(), reservationDate, seqList);
@@ -79,7 +80,7 @@ public class ReservationService {
             createSeatPerRoute(reservationDate, bus);
             List<Seat> seats = seatRepository.findSeatsByBusAndDate(bus.getId(), reservationDate, seqList);
             calSubSeats(seats);
-        } else{
+        } else {
             calSubSeats(findSeats);
         }
     }
@@ -111,7 +112,7 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
         if (!reservations.isEmpty()) {
             for (Reservation reservation : reservations) {
-                if(reservation.getReservationState() != ReservationState.CANCEL)
+                if (reservation.getReservationState() != ReservationState.CANCEL)
                     throw new IllegalStateException("이미 해당 버스에 대한 예약이 존재합니다.");
             }
         }
@@ -124,6 +125,7 @@ public class ReservationService {
 
     /**
      * 예약 취소
+     *
      * @param reservationId
      */
     @Transactional
@@ -142,6 +144,7 @@ public class ReservationService {
 
     /**
      * 예약 거절
+     *
      * @param reservationId
      */
     @Transactional
@@ -166,8 +169,9 @@ public class ReservationService {
         List<Integer> stationSeqs = routeRepository.findSeqByBusAndName(busId, pointList);
 
         List<Integer> seqList = new ArrayList<>();
-        for(int i = stationSeqs.get(0); i <= stationSeqs.get(1); i++)
+        for (int i = stationSeqs.get(0); i <= stationSeqs.get(1); i++)
             seqList.add(i);
+
 
         List<Seat> findSeats = seatRepository.findSeatsByBusAndDate(busId, reservationDate, seqList);
         for (int i = 0; i < findSeats.size() - 1; i++) {

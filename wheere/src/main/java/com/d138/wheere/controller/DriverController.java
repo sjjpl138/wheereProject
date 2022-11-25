@@ -8,62 +8,51 @@ import com.d138.wheere.repository.bus.query.BusNumDirDTO;
 import com.d138.wheere.service.BusService;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.ReservationService;
+import com.d138.wheere.service.SSE.NotificationService;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sun.xml.bind.v2.TODO;
 import lombok.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.d138.wheere.service.SSE.NotificationService.*;
+
 @RestController
 @RequestMapping("/driver")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class DriverController {
 
     private final DriverService driverService;
     private final BusService busService;
     private final ReservationService reservationService;
 
-//    @PostMapping
-//    public ResponseEntity<String> signUpDriver(@ModelAttribute DriverDTO driverDTO) {
-//
-//        String driverId = driverDTO.getDId();
-//        String dName = driverDTO.getDName();
-//
-//        Driver driver = new Driver();
-//        driver.setId(driverId);
-//        driver.setName(dName);
-//        driver.setRatingScore(0);
-//        driver.setRatingCnt(0);
-//
-//        Driver findDriver = driverService.findOne(driverId);
-//        if (findDriver != null)
-//            return  new ResponseEntity("이미 존재하는 회원입니다.", HttpStatus.BAD_REQUEST);
-//
-//        driverService.join(driver);
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
-
     //로그인
     @PostMapping("/login")
-    public  ResponseEntity logInDriver(String dId) {
-        Driver findDriver = driverService.findOne(dId);
+    public ResponseEntity logInDriver(String dId) {
 
+        Driver findDriver = driverService.findOne(dId);
         DriverDTO driverDTO = new DriverDTO();
         driverDTO.setDId(findDriver.getId());
         driverDTO.setDName(findDriver.getName());
 
         List<BusNumDirDTO> busNumDirDTO = busService.inquireBusNumDir();
-
-        LoginResponse response = new LoginResponse(driverDTO, busNumDirDTO);
+        DriverLoginDTO response = new DriverLoginDTO(driverDTO, busNumDirDTO);
 
         return new ResponseEntity(new ObjectResult(response), HttpStatus.OK);
     }
+
 
     //    버스 기사 평점 조회
     @GetMapping("/rate")
@@ -80,32 +69,51 @@ public class DriverController {
     //버스 시간표 조회
     @GetMapping("/bus")
     public  ResponseEntity checkBusSchedule(CheckBusDTO checkBusTimeDTO) {
-        List<LocalTime> busSchedule = busService.inquireBusDepartureTime(checkBusTimeDTO.getBNumber(), checkBusTimeDTO.getBDir());
+        List<Bus> busSchedule = busService.inquireBusDepartureTime(checkBusTimeDTO.getBNumber(), checkBusTimeDTO.getBDir());
 
-        JSONArray scheduleResult = new JSONArray();
-        scheduleResult.addAll(busSchedule);
-        for (LocalTime time : busSchedule) {
-            BusStartTimeDTO startTimeDTO = new BusStartTimeDTO();
+        List<BusStartTimeDTO> busStartTimeDTOS = new ArrayList<>();
+        for (Bus bus : busSchedule) {
+            BusStartTimeDTO busStartTime = new BusStartTimeDTO();
 
-            startTimeDTO.setBStartTime(time);
+            busStartTime.setBId(bus.getId());
+            busStartTime.setBStartTime(bus.getDepartureTime());
+            busStartTimeDTOS.add(busStartTime);
         }
 
-
-        return new ResponseEntity(new BusSchedule(busSchedule), HttpStatus.OK);
+        return new ResponseEntity(new BusSchedule(busStartTimeDTOS), HttpStatus.OK);
     }
 
     //버스기사 버스 배정
     @PostMapping("/bus")
-    public  ResponseEntity assignBus(@ModelAttribute AssignBusDTO assignBusDTO) {
+    public  ResponseEntity assignBus(@RequestBody AssignBusDTO assignBusDTO) {
         String driverId = assignBusDTO.getDId();
-        String bNumber = assignBusDTO.getBNumber();
-        BusState bDir = assignBusDTO.getBDir();
-        LocalTime bStartTime = assignBusDTO.getBStartTime();
-        LocalDate operationDate = assignBusDTO.getBOperationDate();
+        Long bId = assignBusDTO.getBId();
+        LocalTime bOperationDate = assignBusDTO.getBOperationDate();
 
-        driverService.selectBus(operationDate, bNumber, bDir, bStartTime, driverId);
-
+        try {
+//            driverService.selectBus();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    // 예약 조회
+    @GetMapping("/resvs")
+    public ResponseEntity resvResultByDriver (@RequestParam("bId") Long bId, @RequestParam("rTime") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate rDate) {
+
+        List<Reservation> reservations = reservationService.checkScheduleByBus(bId, rDate);
+
+        List<ResvResult> resvResult = new ArrayList<>();
+
+        for (Reservation r : reservations) {
+            Member m = r.getMember();
+            ResvResult resvInfo = new ResvResult(r.getId(), r.getReservationDate(), r.getStartPoint(), r.getEndPoint(), m.getId(), m.getName(), m.getBirthDate(), m.getSex(), m.getPhoneNumber());
+            resvResult.add(resvInfo);
+        }
+
+        return new ResponseEntity(new Reservations(resvResult), HttpStatus.OK);
     }
 
     //예약 승인
@@ -129,12 +137,23 @@ public class DriverController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-
+    @Data
+    @AllArgsConstructor
+    static class DriverLoginDTO<K, T> {
+        private K driver;
+        private T busList;
+    }
 
     @Data
     @AllArgsConstructor
     static  class BusSchedule<T> {
         private T schedule;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Reservations<T> {
+        private T reservations;
     }
 
     @Data
@@ -155,6 +174,7 @@ public class DriverController {
         private String rEnd;
         private String uId;
         private String uName;
+        @JsonFormat(pattern ="yyyy-MM-dd")
         private LocalDate uBirthDate;
         private String uSex;
         private String uNumber;

@@ -44,8 +44,8 @@ public class BusRepository {
     }
 
     // 버스 출발 시간 조회 메서드
-    public List<LocalTime> findDepartureTime(String busNum, BusState direction) {
-        return em.createQuery("select b.departureTime from Bus b where b.busNumber = :busNum and b.direction = :direction", LocalTime.class)
+    public List<Bus> findDepartureTime(String busNum, BusState direction) {
+        return em.createQuery("select b from Bus b where b.busNumber = :busNum and b.direction = :direction", Bus.class)
                 .setParameter("busNum", busNum)
                 .setParameter("direction", direction)
                 .getResultList();
