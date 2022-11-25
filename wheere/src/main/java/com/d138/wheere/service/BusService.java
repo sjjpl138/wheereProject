@@ -41,7 +41,7 @@ public class BusService {
     }
 
     // 버스 시간표 조회 메서드
-    public List<LocalTime> inquireBusDepartureTime(String busNum, BusState direction) {
+    public List<Bus> inquireBusDepartureTime(String busNum, BusState direction) {
         return busRepository.findDepartureTime(busNum, direction);
     }
 
