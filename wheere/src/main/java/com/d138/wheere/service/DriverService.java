@@ -1,9 +1,6 @@
 package com.d138.wheere.service;
 
-import com.d138.wheere.domain.Bus;
-import com.d138.wheere.domain.BusDriver;
-import com.d138.wheere.domain.BusState;
-import com.d138.wheere.domain.Driver;
+import com.d138.wheere.domain.*;
 import com.d138.wheere.repository.BusDriverRepository;
 import com.d138.wheere.repository.BusRepository;
 import com.d138.wheere.repository.DriverRepository;
@@ -78,6 +75,28 @@ public class DriverService {
         if (!busDrivers.isEmpty()) {
             throw new IllegalStateException("이미 배정된 버스입니다.");
         }
+    }
+
+    /**
+     * 버스 배차 취소
+     * @param driverId
+     */
+    @Transactional
+    public void cancelBus(String driverId) {
+
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
+        busDriverRepository.delete(findBusDriver);
+    }
+
+    /**
+     * 배차된 버스 운행 완료
+     * @param driverId
+     */
+    @Transactional
+    public void completeBus(String driverId) {
+        
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
+        findBusDriver.complete();
     }
 
     /**
