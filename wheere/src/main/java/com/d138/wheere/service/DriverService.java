@@ -82,9 +82,9 @@ public class DriverService {
      * @param driverId
      */
     @Transactional
-    public void cancelBus(String driverId) {
+    public void cancelBus(String driverId, Long busId) {
 
-        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
         busDriverRepository.delete(findBusDriver);
     }
 
@@ -93,9 +93,9 @@ public class DriverService {
      * @param driverId
      */
     @Transactional
-    public void completeBus(String driverId) {
+    public void completeBus(String driverId, Long busId) {
         
-        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
         findBusDriver.complete();
     }
 
