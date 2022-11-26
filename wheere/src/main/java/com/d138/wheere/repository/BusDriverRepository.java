@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class BusDriverRepository {
      * @param operationDate 로그아웃 날짜
      * @return
      */
-    public BusDriver findBusDriverByDriverAndDate(String driverId, Long busId, LocalDate operationDate) {
+    public BusDriver findBusDriverByDriverAndDate(String driverId, Long busId, LocalDate operationDate) throws NoResultException {
         return em.createQuery("select bd from BusDriver bd" +
                         " join bd.driver d on d.id = :driverId" +
                         " join bd.bus b on b.id = :busId" +
