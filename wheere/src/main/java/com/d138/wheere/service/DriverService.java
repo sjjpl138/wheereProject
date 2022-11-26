@@ -7,6 +7,7 @@ import com.d138.wheere.repository.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -85,14 +86,10 @@ public class DriverService {
      * @param driverId
      */
     @Transactional
-    public void cancelBus(String driverId, Long busId) {
+    public void cancelBus(String driverId, Long busId) throws NoResultException {
 
-        try {
-            BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
-            busDriverRepository.delete(findBusDriver);
-        } catch (Exception e) {
-            return;
-        }
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
+        busDriverRepository.delete(findBusDriver);
     }
 
     /**
@@ -101,14 +98,10 @@ public class DriverService {
      * @param driverId
      */
     @Transactional
-    public void completeBus(String driverId, Long busId) {
+    public void completeBus(String driverId, Long busId) throws NoResultException {
 
-        try {
-            BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
-            findBusDriver.complete();
-        } catch (Exception e) {
-            return;
-        }
+        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
+        findBusDriver.complete();
     }
 
     /**
