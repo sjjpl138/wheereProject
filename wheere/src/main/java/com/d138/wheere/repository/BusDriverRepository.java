@@ -1,6 +1,7 @@
 package com.d138.wheere.repository;
 
 import com.d138.wheere.domain.BusDriver;
+import com.d138.wheere.domain.BusDriverStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -17,6 +18,10 @@ public class BusDriverRepository {
     public Long save(BusDriver busDriver) {
         em.persist(busDriver);
         return busDriver.getId();
+    }
+
+    public void delete(BusDriver busDriver) {
+        em.remove(busDriver);
     }
 
     /**
@@ -63,5 +68,21 @@ public class BusDriverRepository {
                 .setParameter("busId", busId)
                 .setParameter("operationDate", operationDate)
                 .getResultList();
+    }
+
+    /**
+     * 버스 기사 로그아웃 시 BusDriver 조회
+     *
+     * @param driverId      버스 기사 ID (PK)
+     * @param operationDate 로그아웃 날짜
+     * @return
+     */
+    public BusDriver findBusDriverByDriverAndDate(String driverId, LocalDate operationDate) {
+        return em.createQuery("select bd from BusDriver bd" +
+                        " join bd.driver d on d.id = :driverId" +
+                        " where bd.operationDate = :operationDate", BusDriver.class)
+                .setParameter("driverId", driverId)
+                .setParameter("operationDate", operationDate)
+                .getSingleResult();
     }
 }
