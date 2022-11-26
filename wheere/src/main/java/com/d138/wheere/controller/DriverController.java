@@ -8,6 +8,7 @@ import com.d138.wheere.repository.bus.query.BusNumDirDTO;
 import com.d138.wheere.service.BusService;
 import com.d138.wheere.service.DriverService;
 import com.d138.wheere.service.ReservationService;
+import com.d138.wheere.service.SSE.NotificationService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.json.simple.JSONObject;
@@ -30,6 +31,7 @@ public class DriverController {
     private final DriverService driverService;
     private final BusService busService;
     private final ReservationService reservationService;
+    private final NotificationService notificationService;
 
     //로그인
     @PostMapping("/login")
@@ -119,6 +121,35 @@ public class DriverController {
         return new ResponseEntity(new Reservations(resvResult), HttpStatus.OK);
     }
 
+    //버스 배차 취소
+    @PostMapping("/bus/cancel")
+    public ResponseEntity cancelBusAssignment(AssignDTO assignDTO) {
+        String dId = assignDTO.getDId();
+        Long bId = assignDTO.getBId();
+
+        try {
+            driverService.cancelBus(dId, bId);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    //버스 배차 완료
+    @PostMapping("/bus/comp")
+    public  ResponseEntity busAssignmentComplete(AssignDTO assignDTO) {
+        String dId = assignDTO.getDId();
+        Long bId = assignDTO.getBId();
+
+        try {
+        driverService.completeBus(dId, bId);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+
     //예약 승인
     @PostMapping("/resv/permit")
     public ResponseEntity permitResv(long rId) {
@@ -136,8 +167,27 @@ public class DriverController {
     //예약 완료
     @PostMapping("/resv/complete")
     public ResponseEntity completeResv (long rId) {
-        reservationService.completeReservation(rId);
+        try {
+            reservationService.completeReservation(rId);
+            Reservation resv = reservationService.findReservation(rId);
+            String uId = resv.getMember().getId();
+
+            notificationService.sendByUserForRating(uId, rId);
+            System.out.println("=======================================");
+            System.out.println("!!resvState = " + resv.getReservationState());
+            System.out.println("=======================================");
+
+        } catch (IllegalStateException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class AssignDTO {
+        private String dId;
+        private Long bId;
     }
 
     @Data
