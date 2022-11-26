@@ -26,13 +26,14 @@ public class DriverService {
     /**
      * 버스 기사 평점 반영할 때 호출됨
      * 버스 ID (PK), 운행 날짜, 평점 필요
-     * @param busId 버스 ID (PK)
+     *
+     * @param busId         버스 ID (PK)
      * @param operationDate 운행 날짜
-     * @param score 평점
+     * @param score         평점
      * @return 반영 후 평점
      */
     @Transactional
-    public double reflectScores (Long busId, LocalDate operationDate, double score) {
+    public double reflectScores(Long busId, LocalDate operationDate, double score) {
 
         BusDriver findBusDriver = busDriverRepository.findBusDriverWithDriver(busId, operationDate);
         Driver findDriver = findBusDriver.getDriver();
@@ -46,9 +47,10 @@ public class DriverService {
      * 버스 기사 버스 배정
      * 예외처리 필요
      * [운행 날짜], [버스 번호, 방향, 출발 시간], [버스기사 ID]를 받아와 해당 버스를 배정한다.
+     *
      * @param operationDate 운행 날짜
-     * @param busId 버스 ID (PK)
-     * @param driverId 버스기사 ID (PK)
+     * @param busId         버스 ID (PK)
+     * @param driverId      버스기사 ID (PK)
      * @return 생성된 BusDriver ID (PK)
      */
     @Transactional
@@ -79,28 +81,39 @@ public class DriverService {
 
     /**
      * 버스 배차 취소
+     *
      * @param driverId
      */
     @Transactional
-    public void cancelBus(String driverId) {
+    public void cancelBus(String driverId, Long busId) {
 
-        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
-        busDriverRepository.delete(findBusDriver);
+        try {
+            BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
+            busDriverRepository.delete(findBusDriver);
+        } catch (Exception e) {
+            return;
+        }
     }
 
     /**
      * 배차된 버스 운행 완료
+     *
      * @param driverId
      */
     @Transactional
-    public void completeBus(String driverId) {
-        
-        BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, LocalDate.now());
-        findBusDriver.complete();
+    public void completeBus(String driverId, Long busId) {
+
+        try {
+            BusDriver findBusDriver = busDriverRepository.findBusDriverByDriverAndDate(driverId, busId, LocalDate.now());
+            findBusDriver.complete();
+        } catch (Exception e) {
+            return;
+        }
     }
 
     /**
      * 버스기사 평점 조회 시 호출됨
+     *
      * @param driverId
      * @return 버스기사 평점
      */
@@ -111,6 +124,7 @@ public class DriverService {
 
     /**
      * 버스기사 ID로 버스기사 조회 시 사용
+     *
      * @param driverId
      * @return
      */
