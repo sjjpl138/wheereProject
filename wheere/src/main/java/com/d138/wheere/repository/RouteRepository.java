@@ -17,6 +17,7 @@ public class RouteRepository {
 
     /**
      * 버스 번호와 버스 방향으로 해당 버스 경로 조회
+     *
      * @param busNum
      * @param direction
      * @return
@@ -54,6 +55,7 @@ public class RouteRepository {
     /**
      * 출발, 도착 정류장 조회
      * 버스 예약할 때 사용됨
+     *
      * @param busId
      * @param seqList
      * @return 출발, 도착 정류장
@@ -71,6 +73,7 @@ public class RouteRepository {
     /**
      * 출발 정류장, 도착 정류장에 대한 정류장 순번 얻기
      * 예약 취소 (CANCEL) 시 호출됨
+     *
      * @param busId
      * @param pointList
      * @return
@@ -86,7 +89,8 @@ public class RouteRepository {
 
     /**
      * 사용자 8. 버스 시간표 조회에서 호출됨
-     * @param busId 버스 ID (PK)
+     *
+     * @param busId      버스 ID (PK)
      * @param stationSeq 정류장 순번
      * @return 해당 정류장에 버스가 도착하는 시간
      */
@@ -96,6 +100,15 @@ public class RouteRepository {
                         " where r.stationSeq = :stationSeq", LocalTime.class)
                 .setParameter("busId", busId)
                 .setParameter("stationSeq", stationSeq)
+                .getSingleResult();
+    }
+
+    public int findSeqByBusAndStation(Long busId, String stationName) {
+        return em.createQuery("select r.stationSeq from Route r"
+                        + " join r.bus b on b.id = :busId" +
+                        " join r.station s on s.name = :stationName", Integer.class)
+                .setParameter("busId", busId)
+                .setParameter("stationName", stationName)
                 .getSingleResult();
     }
 }

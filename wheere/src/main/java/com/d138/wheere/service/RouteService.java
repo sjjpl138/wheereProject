@@ -36,4 +36,8 @@ public class RouteService {
     public LocalTime inquireTimeByBusAndSeq(Long busId, int stationSeq) {
         return routeRepository.findTimeByBusAndSeq(busId, stationSeq);
     }
+
+    public int inquireSeqByBusAndStation(Long busId, String stationName) {
+        return routeRepository.findSeqByBusAndStation(busId, stationName);
+    }
 }

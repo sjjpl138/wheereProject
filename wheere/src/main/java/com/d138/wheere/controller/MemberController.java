@@ -95,6 +95,8 @@ public class MemberController {
     //사용자 정보 수정
     @PutMapping("/{uId}")
     public ResponseEntity updateUser(@PathVariable("uId") String userId, MemberDTO memberDTO) {
+        System.out.println("memberDTO.getUNum() = " + memberDTO.getUNum());
+        memberDTO.setUId(userId);
         memberService.modifyPhoneNumber(userId, memberDTO.getUNum());
 
         return new ResponseEntity(memberDTO, HttpStatus.OK);
@@ -180,7 +182,14 @@ public class MemberController {
         List<Reservation> findReservations = reservationService.findReservationsByMember(memberId);
 
         List<ReservationDto> collect = findReservations.stream()
-                .map(o -> new ReservationDto(memberId, o))
+                .map(r -> {
+                    Long busId = r.getBus().getId();
+                    int startSeq = routeService.inquireSeqByBusAndStation(busId, r.getStartPoint());
+                    int endSeq = routeService.inquireSeqByBusAndStation(busId, r.getEndPoint());
+                    LocalTime bStartTime = routeService.inquireTimeByBusAndSeq(busId, startSeq);
+                    LocalTime bArrivalTime = routeService.inquireTimeByBusAndSeq(busId, endSeq);
+                    return new ReservationDto(memberId, r, bStartTime, bArrivalTime);
+                })
                 .collect(Collectors.toList());
 
         InquiryReservationResult inquiryReservationResult = new InquiryReservationResult(collect);
@@ -198,6 +207,14 @@ public class MemberController {
         int endSeq = resvDTO.getEndSeq();
         LocalDate rTime = resvDTO.getRTime();
 
+        System.out.println("=========================================");
+        System.out.println("uId = " + uId);
+        System.out.println("bId = " + bId);
+        System.out.println("startSeq = " + startSeq);
+        System.out.println("endSeq = " + endSeq);
+        System.out.println("rTime = " + rTime);
+        System.out.println("=========================================");
+
         try {
             Long rId = reservationService.saveReservation(uId, bId, startSeq, endSeq, rTime);
             /**
@@ -206,11 +223,21 @@ public class MemberController {
              */
             String dId = new String();
             List<BusDriver> busDrivers = busDriverService.findDriverByBId(bId, rTime);
-            if (!busDrivers.isEmpty()) {
+            System.out.println("busDrivers = " + busDrivers.size());
+            if (busDrivers != null) {
                 for (BusDriver bd : busDrivers) {
                     dId = bd.getDriver().getId();
                 }
                 notificationService.send(dId, rId, startSeq, endSeq, rTime);
+
+                System.out.println("==================================");
+                System.out.println("SSE_dId = " + dId);
+                System.out.println("SSE_rId = " + rId);
+                System.out.println("SSE_startSeq = " + startSeq);
+                System.out.println("SSE_endSeq = " + endSeq);
+                System.out.println("SSE_rTime = " + rTime);
+                System.out.println("==================================");
+
             }
 
             return new ResponseEntity(HttpStatus.OK);
@@ -241,17 +268,28 @@ public class MemberController {
         private String rEnd;
         private boolean rIsPaid;
         private String bNumber;
+
+        private BusState bDir;
+
         private ReservationState rState;
 
-        public ReservationDto(String memberId, Reservation reservation) {
+        @JsonFormat(pattern = "HH:mm:ss")
+        private LocalTime bStartTime;
+        @JsonFormat(pattern = "HH:mm:ss")
+        private LocalTime bArrivalTime;
+
+        public ReservationDto(String memberId, Reservation reservation, LocalTime bStartTime, LocalTime bArrivalTime) {
             uId = memberId;
             rId = reservation.getId();
             rTime = reservation.getReservationDate();
             rStart = reservation.getStartPoint();
             rEnd = reservation.getEndPoint();
             rIsPaid = true;
+            bDir = reservation.getBus().getDirection();
             bNumber = reservation.getBus().getBusNumber();
             rState = reservation.getReservationState();
+            this.bStartTime = bStartTime;
+            this.bArrivalTime = bArrivalTime;
         }
     }
 

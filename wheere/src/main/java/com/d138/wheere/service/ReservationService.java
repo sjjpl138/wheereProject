@@ -109,7 +109,11 @@ public class ReservationService {
 
     private void validateDuplicateReservation(LocalDate reservationDate, Member member, Bus bus) {
         // 예약하려는 날짜에 사용자의 예약하려는 버스에 대한 예약들을 불러온다.
+        System.out.println("test");
         List<Reservation> reservations = reservationRepository.checkScheduleDuplication(member.getId(), bus.getId(), reservationDate);
+        for (Reservation reservation : reservations) {
+            System.out.println("reservation = " + reservation);
+        }
         if (!reservations.isEmpty()) {
             for (Reservation reservation : reservations) {
                 if (reservation.getReservationState() != ReservationState.CANCEL)

@@ -25,12 +25,16 @@ public class NotificationController {
      * SSE 구독
      */
 
-    @GetMapping(value = "/subscribe/{dId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/subscribe/{dId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable String dId,
                                 @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
 
             SseEmitter emitter = notificationService.subscribe(dId, lastEventId);
+        System.out.println("==================================");
+        System.out.println("SSE_dId = " + dId);
+        System.out.println("==================================");
 
-            return emitter;
+
+        return emitter;
         }
 }

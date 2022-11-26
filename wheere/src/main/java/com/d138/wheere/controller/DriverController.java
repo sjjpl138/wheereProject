@@ -89,6 +89,10 @@ public class DriverController {
         Long bId = assignBusDTO.getBId();
         LocalDate bOperationDate = assignBusDTO.getBOperationDate();
 
+        System.out.println("driverId = " + driverId);
+        System.out.println("bId = " + bId);
+        System.out.println("bOperationDate = " + bOperationDate);
+
         try {
             driverService.selectBus(bOperationDate, bId, driverId);
         } catch (IllegalStateException e) {

@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 public class Reservation extends BaseEntity{
 
-    // TODO (BaseEntity 추가하기)
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RESERVATION_ID")
