@@ -217,6 +217,10 @@ public class MemberController {
 
         try {
             Long rId = reservationService.saveReservation(uId, bId, startSeq, endSeq, rTime);
+            Reservation findResv = reservationService.findReservation(rId);
+            String startPoint = findResv.getStartPoint();
+            String endPoint = findResv.getEndPoint();
+
             /**
              * SSE
              * send Data to client
@@ -228,13 +232,13 @@ public class MemberController {
                 for (BusDriver bd : busDrivers) {
                     dId = bd.getDriver().getId();
                 }
-                notificationService.send(dId, rId, startSeq, endSeq, rTime);
+                notificationService.send(dId, rId, startPoint, endPoint, rTime);
 
                 System.out.println("==================================");
                 System.out.println("SSE_dId = " + dId);
                 System.out.println("SSE_rId = " + rId);
-                System.out.println("SSE_startSeq = " + startSeq);
-                System.out.println("SSE_endSeq = " + endSeq);
+                System.out.println("SSE_startPoint = " + startPoint);
+                System.out.println("SSE_endPoint = " + endPoint);
                 System.out.println("SSE_rTime = " + rTime);
                 System.out.println("==================================");
 

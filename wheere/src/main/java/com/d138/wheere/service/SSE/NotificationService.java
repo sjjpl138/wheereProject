@@ -35,7 +35,8 @@ public class NotificationService {
         // 3
         // 503 에러를 방지하기 위한 더미 이벤트 전송
         String eventName = "503에러 방지용 이벤트";
-        sendToClient(emitter, id, "EventStream Created. [driverId=" + dId + "]", eventName);
+        EventDTO eventDTO = new EventDTO("EventStream Created.", dId);
+        sendToClient(emitter, id, eventDTO, eventName);
 
         // 4
         // 클라이언트가 미수신한 Event 목록이 존재할 경우 전송하여 Event 유실을 예방
@@ -68,8 +69,8 @@ public class NotificationService {
         });
     }
 
-    public void send(String  dId, Long rId, int startSeq, int endSeq, LocalDate rTime ) {
-        Notification notification = createNotification(rId, startSeq, endSeq, rTime);
+    public void send(String  dId, Long rId, String startPoint, String  endPoint, LocalDate rTime ) {
+        Notification notification = createNotification(rId, startPoint, endPoint, rTime);
 
         //버스 기사에 대한 SseEmitter 모두 가져오기
         Map<String, SseEmitter> sseEmitters = emitterRepository.findAllStartWithById(dId);
@@ -86,11 +87,11 @@ public class NotificationService {
         );
     }
 
-    private Notification createNotification(Long rId, int startSeq, int endSeq, LocalDate rTime) {
+    private Notification createNotification(Long rId, String startPoint, String endPoint, LocalDate rTime) {
         return Notification.builder()
                 .rId(rId)
-                .startSeq(startSeq)
-                .endSeq(endSeq)
+                .startPoint(startPoint)
+                .endPoint(endPoint)
                 .rTime(rTime)
                 .build();
     }
@@ -98,10 +99,18 @@ public class NotificationService {
     @Data
     @Builder
     @AllArgsConstructor
+    static class EventDTO {
+        private String dId;
+        private String comment;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
     public static class Notification {
         private Long rId;
-        private int startSeq;
-        private int endSeq;
+        private String startPoint;
+        private String endPoint;
         private LocalDate rTime;
     }
 
