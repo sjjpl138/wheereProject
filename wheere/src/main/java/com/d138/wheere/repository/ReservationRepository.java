@@ -29,23 +29,28 @@ public class ReservationRepository {
 
     // MemberId로 예약 조회하기
     public List<Reservation> findByMember(String memberId) {
+
+        List<ReservationState> reservationStates = Arrays.asList(ReservationState.RESERVED, ReservationState.WAITING);
+
         return em.createQuery("select r from Reservation r" +
                         " join r.member m on m.id = :memberId" +
                         " join fetch r.bus" +
+                        " where r.reservationState in :reservationStates" +
                         " ORDER BY r.reservationDate DESC", Reservation.class)
                 .setParameter("memberId", memberId)
+                .setParameter("reservationStates", reservationStates)
                 .getResultList();
     }
 
     // 특정 버스, 특정 날짜에 대한 예약 검색
     public List<Reservation> findByBusAndDate(Long busId, LocalDate reservationDate) {
 
-        List<ReservationState> reservationStates = Arrays.asList(ReservationState.RESERVED, ReservationState.WAITING);
+        List<ReservationState> reservationStates = Arrays.asList(ReservationState.RESERVED, ReservationState.WAITING, ReservationState.COMP);
 
         return em.createQuery("select r from Reservation r"
                                 + " join r.bus b on b.id = :busId"
-                                + " where r.reservationDate = :date" +
-                                " and r.reservationState in :reservationStates"
+                                + " where r.reservationDate = :date"
+                                + " and r.reservationState in :reservationStates"
                         , Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("date", reservationDate)
@@ -55,6 +60,7 @@ public class ReservationRepository {
 
     /**
      * 사용자가 같은 버스를 동일한 날짜에 예약한적이 있는지 검증
+     *
      * @param memberId
      * @param busId
      * @param reservationDate
