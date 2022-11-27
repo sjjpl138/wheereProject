@@ -2,11 +2,13 @@ package com.d138.wheere.repository;
 
 import com.d138.wheere.domain.BusState;
 import com.d138.wheere.domain.Reservation;
+import com.d138.wheere.domain.ReservationState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,14 +38,18 @@ public class ReservationRepository {
     }
 
     // 특정 버스, 특정 날짜에 대한 예약 검색
-    // TODO (정류소 순번별로 정렬해야 함)
     public List<Reservation> findByBusAndDate(Long busId, LocalDate reservationDate) {
+
+        List<ReservationState> reservationStates = Arrays.asList(ReservationState.RESERVED, ReservationState.WAITING);
+
         return em.createQuery("select r from Reservation r"
                                 + " join r.bus b on b.id = :busId"
-                                + " where r.reservationDate = :date"
+                                + " where r.reservationDate = :date" +
+                                " and r.reservationState in :reservationStates"
                         , Reservation.class)
                 .setParameter("busId", busId)
                 .setParameter("date", reservationDate)
+                .setParameter("reservationStates", reservationStates)
                 .getResultList();
     }
 
