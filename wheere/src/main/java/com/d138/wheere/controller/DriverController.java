@@ -47,15 +47,8 @@ public class DriverController {
 
         return new ResponseEntity(new ObjectResult(response), HttpStatus.OK);
     }
-    @Data
-    @AllArgsConstructor
-    static class BusNumDirDto {
-        private String bNumber;
-        private BusState bDir;
-    }
 
-
-    //    버스 기사 평점 조회
+    // 버스 기사 평점 조회
     @GetMapping("/rate")
     public JSONObject searchRatingResult(@RequestParam("dId") String driverId) {
 
@@ -67,7 +60,7 @@ public class DriverController {
     }
 
 
-    //버스 시간표 조회
+    // 버스 시간표 조회
     @GetMapping("/bus")
     public  ResponseEntity checkBusSchedule(CheckBusDTO checkBusTimeDTO) {
         List<Bus> busSchedule = busService.inquireBusDepartureTime(checkBusTimeDTO.getBNumber(), checkBusTimeDTO.getBDir());
@@ -84,7 +77,7 @@ public class DriverController {
         return new ResponseEntity(new BusSchedule(busStartTimeDTOS), HttpStatus.OK);
     }
 
-    //버스기사 버스 배정
+    // 버스기사 버스 배정
     @PostMapping("/bus")
     public  ResponseEntity assignBus( AssignBusDTO assignBusDTO) {
         String driverId = assignBusDTO.getDId();
