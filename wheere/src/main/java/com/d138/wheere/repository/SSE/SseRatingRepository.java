@@ -6,13 +6,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Repository
 @NoArgsConstructor
 @Log4j2
-public class EmitterRepository implements SseBaseRepository {
-
+public class SseRatingRepository implements SseBaseRepository{
 
     @Override
     public SseEmitter save(String id, SseEmitter sseEmitter) {

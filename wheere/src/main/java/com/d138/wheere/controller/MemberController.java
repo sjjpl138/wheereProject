@@ -111,6 +111,12 @@ public class MemberController {
         LocalDate resvDate = findResv.getReservationDate();
         Double rate = rateDriverDTO.getRate();
 
+        System.out.println("===================================");
+        System.out.println("bId = " + bId);
+        System.out.println("rese = " + resvDate);
+        System.out.println("rate = " + rate);
+        System.out.println("===================================");
+
         driverService.reflectScores(bId, resvDate, rate);
 
         return new ResponseEntity(HttpStatus.OK);
@@ -155,7 +161,7 @@ public class MemberController {
 
         System.out.println("=============================================");
         System.out.println("checkBusDTO.getBNumber() = " + checkBusDTO.getBNumber());
-        System.out.println("checkBusDTO.getBDir( = " + checkBusDTO.getBDir());
+        System.out.println("checkBusDTO.getBDir() = " + checkBusDTO.getBDir());
         System.out.println("=============================================");
 
         List<Route> routeList = routeService.findBusRouteByBusInfo(checkBusDTO.getBNumber(), checkBusDTO.getBDir());
