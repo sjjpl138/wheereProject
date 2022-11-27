@@ -29,6 +29,7 @@ public class BusDriver extends BaseEntity{
     private LocalDate operationDate;
 
     // 버스 배정 상태
+    @Enumerated(EnumType.STRING)
     private BusDriverStatus status;
 
     public BusDriver(LocalDateTime createDate, LocalDateTime lastModifiedDate, Bus bus, Driver driver, LocalDate operationDate) {
